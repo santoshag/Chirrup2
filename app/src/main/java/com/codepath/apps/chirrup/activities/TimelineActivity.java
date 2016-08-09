@@ -1,14 +1,11 @@
 package com.codepath.apps.chirrup.activities;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -21,13 +18,10 @@ import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.TwitterApplication;
 import com.codepath.apps.chirrup.TwitterClient;
-import com.codepath.apps.chirrup.adapters.TweetsAdapter;
-import com.codepath.apps.chirrup.decorators.DividerItemDecoration;
-import com.codepath.apps.chirrup.decorators.ItemClickSupport;
 import com.codepath.apps.chirrup.fragments.NewTweetFragment;
+import com.codepath.apps.chirrup.fragments.TweetsListFragment;
 import com.codepath.apps.chirrup.models.Tweet;
 import com.codepath.apps.chirrup.models.User;
-import com.codepath.apps.chirrup.utils.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.chirrup.utils.Utils;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -35,7 +29,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -51,25 +44,27 @@ public class TimelineActivity extends AppCompatActivity {
     ImageView ivProfilePhoto;
     @BindView(R.id.ivAirplaneMode)
     ImageView ivAirplaneMode;
-    @BindView(R.id.swipeContainer)
-    SwipeRefreshLayout swipeContainer;
-    @BindView(R.id.rvTweets)
-    RecyclerView rvTweets;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.fabCompose)
     FloatingActionButton fabCompose;
-
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.swipeContainer)
+    SwipeRefreshLayout swipeContainer;
 
     private TwitterClient client;
-    private TweetsAdapter tweetsAdapter;
-    private ArrayList<Tweet> tweetList;
+    private TweetsListFragment tweetsListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
         ButterKnife.bind(this);
+
+        //get the fragment only for the first time, otherwise the fragment is already available most likely
+        if(savedInstanceState == null) {
+            //access the fragment
+            tweetsListFragment = (TweetsListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_timeline);
+        }
 
         // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
@@ -78,49 +73,11 @@ public class TimelineActivity extends AppCompatActivity {
         //get singleton rest client
         client = TwitterApplication.getRestClient();
         setupProfileImage();
-        setupTweetsAdapter();
-        setupSwipeToRefreshView();
+        //setupSwipeToRefreshView();
 
     }
 
-    private void setupTweetsAdapter() {
-        tweetList = new ArrayList<>();
-        tweetsAdapter = new TweetsAdapter(this, tweetList);
-        rvTweets.setAdapter(tweetsAdapter);
-        // Setup layout manager for items with orientation
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        // Optionally customize the position you want to default scroll to
-        layoutManager.scrollToPosition(0);
 
-        ItemClickSupport.addTo(rvTweets).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Tweet tweet = tweetList.get(position);
-                        Intent intent = new Intent(TimelineActivity.this, DetailActivity.class);
-                        startActivity(intent);
-                    }
-                }
-        );
-
-        RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
-        rvTweets.addItemDecoration(itemDecoration);
-        rvTweets.setLayoutManager(layoutManager);
-
-        rvTweets.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                //limit totalItemsCount to void "Rate limit exceeded" error
-                if (totalItemsCount < 60) {
-                    populateMoreTimeline();
-                }
-            }
-        });
-
-    }
 
     private void setupProfileImage() {
         client.getUserProfile(new JsonHttpResponseHandler() {
@@ -158,10 +115,7 @@ public class TimelineActivity extends AppCompatActivity {
             // Load the result into the adapter using `addAll`
             Log.i("sql", "loading data from offline: " + queryResults.size() + " " + queryResults.get(1).getUser().getProfileImageUrl());
             ivAirplaneMode.setVisibility(View.VISIBLE);
-            tweetList.clear();
-            tweetList.addAll(queryResults);
-            tweetsAdapter.notifyDataSetChanged();
-
+            tweetsListFragment.addAll(queryResults, true);
         } else {
             fabCompose.setVisibility(View.VISIBLE);
             ivAirplaneMode.setVisibility(View.GONE);
@@ -176,6 +130,38 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void attachBaseContext(Context context) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(context));
+    }
+
+    private void populateMoreTimeline() {
+        if (Tweet.lastTweetId != null) {
+            populateTimeline("max_id", Tweet.lastTweetId);
+        }
+    }
+
+    //send API request to get tweets and add it to listview
+    private void populateTimeline(final String sinceOrMaxId, long count) {
+
+        client.getHomeTimeline(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                Log.d("DEBUG", response.toString());
+                Boolean clearTweetListBeforeAdd = false;
+                if (sinceOrMaxId.equals("since_id")) {
+                    clearTweetListBeforeAdd = true;
+                    new Delete().from(Tweet.class).execute(); // all records
+                    new Delete().from(User.class).execute(); // all records
+                }
+                tweetsListFragment.addAll(Tweet.fromJsonArray(response), clearTweetListBeforeAdd);
+                swipeContainer.setRefreshing(false);
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG", "onFailure" + errorResponse.toString());
+                swipeContainer.setRefreshing(false);
+            }
+        }, sinceOrMaxId, count);
     }
 
     private void setupSwipeToRefreshView() {
@@ -203,40 +189,5 @@ public class TimelineActivity extends AppCompatActivity {
         myDialog.show(fm, "new tweet");
 
     }
-
-
-    private void populateMoreTimeline() {
-        if (Tweet.lastTweetId != null) {
-            populateTimeline("max_id", Tweet.lastTweetId);
-        }
-    }
-
-    //send API request to get tweets and add it to listview
-    private void populateTimeline(final String sinceOrMaxId, long count) {
-
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("DEBUG", response.toString());
-                Boolean clearOfflineTweets = Boolean.FALSE;
-                if (sinceOrMaxId.equals("since_id")) {
-                    tweetList.clear();
-                    new Delete().from(Tweet.class).execute(); // all records
-                    new Delete().from(User.class).execute(); // all records
-                }
-                tweetList.addAll(Tweet.fromJsonArray(response));
-                tweetsAdapter.notifyDataSetChanged();
-                swipeContainer.setRefreshing(false);
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("DEBUG", "onFailure" + errorResponse.toString());
-                swipeContainer.setRefreshing(false);
-            }
-        }, sinceOrMaxId, count);
-    }
-
 
 }

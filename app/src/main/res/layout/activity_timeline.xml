@@ -65,24 +65,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".activities.TimelineActivity">
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/swipeContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvTweets"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FFFFFF"
-            />
-
-        </android.support.v4.widget.SwipeRefreshLayout>
+        tools:context=".activities.TimelineActivity"
+        android:id="@+id/rvTweetListFragment">
 
 
+        <fragment
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:name="com.codepath.apps.chirrup.fragments.TweetsListFragment"
+            android:id="@+id/fragment_timeline"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
     </RelativeLayout>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabCompose"
@@ -94,6 +88,6 @@
         android:onClick="composeNewTweet"
         app:fabSize="normal"
         android:src="@drawable/compose"
-        app:layout_anchor="@id/rvTweets"
+        app:layout_anchor="@id/rvTweetListFragment"
         app:layout_anchorGravity="bottom|right|end" />
 </android.support.design.widget.CoordinatorLayout>
