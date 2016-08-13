@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
+    tools:context=".activities.SearchActivity">
 
     <include layout="@layout/toolbar"></include>
 
@@ -13,11 +18,15 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvFollows"
+        <FrameLayout
+            android:id="@+id/flContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FFFFFF"/>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/rlUserHeader"></FrameLayout>
 
     </RelativeLayout>
+
+
 </android.support.design.widget.CoordinatorLayout>

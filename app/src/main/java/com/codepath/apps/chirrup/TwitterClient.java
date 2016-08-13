@@ -46,8 +46,9 @@ public class TwitterClient extends OAuthBaseClient {
             params.put("since_id", id);
             params.put("count", 25);
 
+        }else {
+            params.put(sinceOrMaxId, id);
         }
-		params.put(sinceOrMaxId, id);
 		getClient().get(apiUrl, params, repsonseHandler);
 	}
 
@@ -93,6 +94,23 @@ public class TwitterClient extends OAuthBaseClient {
         params.put("count", 200);
         getClient().get(apiUrl, params, repsonseHandler);
 	}
+
+    public void searchTweets(JsonHttpResponseHandler repsonseHandler, String sinceOrMaxId, Long id, String query) {
+        String apiUrl = getApiUrl("search/tweets.json");
+        //specify the params
+        RequestParams params = new RequestParams();
+        /*if(sinceOrMaxId.equals("since_id")) {
+
+            params.put("since_id", id);
+            params.put("count", 25);
+
+        }else {
+            params.put(sinceOrMaxId, id);
+        }*/
+        params.put("q", query);
+        getClient().get(apiUrl, params, repsonseHandler);
+    }
+
     /************ POST METHODS ********************/
 
 	public void composeTweet(AsyncHttpResponseHandler  repsonseHandler, String tweetBody){

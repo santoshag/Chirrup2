@@ -34,6 +34,7 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class ProfileActivity extends AppCompatActivity {
+
     TwitterClient client;
     User user;
     @BindView(R.id.ivProfilePic)
@@ -48,12 +49,10 @@ public class ProfileActivity extends AppCompatActivity {
     TextView tvFollowers;
     @BindView(R.id.tvFollowing)
     TextView tvFollowing;
-
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbarTitle)
     TextView toolbarTitle;
-
 
     public enum Follow {
         Following, Follower;
