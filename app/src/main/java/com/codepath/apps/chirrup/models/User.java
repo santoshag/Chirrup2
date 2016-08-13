@@ -7,22 +7,43 @@ import com.activeandroid.query.Select;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 /**
  * Created by santoshag on 8/5/16.
  */
+@Parcel(analyze={User.class})   // add Parceler annotation here
 @Table(name = "Users")
 public class User extends Model{
 
     @Column(name = "remote_id", unique = true)
-    private Long remoteId;
+    public Long remoteId;
     @Column(name = "screen_name")
-    private String screenName;
+    public String screenName;
     @Column(name = "name")
-    private String name;
-    @Column(name = "profile_image_url")
-    private String profileImageUrl;
+    public String name;
 
+    public String getDescription() {
+        return description;
+    }
+
+    @Column(name = "description")
+    public String description;
+    @Column(name = "profile_image_url")
+    public String profileImageUrl;
+    @Column(name = "following_count")
+    public int followingCount;
+    @Column(name = "followers_count")
+    public int followersCount;
+
+
+    public int getFollowingCount() {
+        return followingCount;
+    }
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
 
     // Make sure to have a default constructor for every ActiveAndroid model
     public User(){
@@ -70,8 +91,11 @@ public class User extends Model{
         try {
             user.remoteId = jsonObject.getLong("id");
             user.name = jsonObject.getString("name");
+            user.description = jsonObject.getString("description");
             user.screenName = "@" + jsonObject.getString("screen_name");
             user.profileImageUrl = getOriginalImage(jsonObject.getString("profile_image_url"));
+            user.followingCount = jsonObject.getInt("friends_count");
+            user.followersCount = jsonObject.getInt("followers_count");
         } catch (JSONException e) {
             e.printStackTrace();
         }

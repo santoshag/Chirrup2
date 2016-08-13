@@ -5,6 +5,12 @@
     android:padding="10dp">
 
     <ImageView
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:id="@+id/ivRetweet"
+        android:src="@drawable/retweet_off"/>
+
+    <ImageView
         android:layout_width="54dp"
         android:layout_height="54dp"
         android:id="@+id/ivProfileImg"
@@ -92,7 +98,7 @@
     <ImageView
         android:layout_width="18dp"
         android:layout_height="18dp"
-        android:id="@+id/ivRetweet"
+        android:id="@+id/ivRetweetsCount"
         android:src="@drawable/retweet_off"
         android:layout_weight=".12"/>
     <TextView

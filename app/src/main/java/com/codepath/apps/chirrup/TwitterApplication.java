@@ -2,6 +2,8 @@ package com.codepath.apps.chirrup;
 
 import android.content.Context;
 
+import com.facebook.stetho.Stetho;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /*
@@ -19,6 +21,7 @@ public class TwitterApplication extends com.activeandroid.app.Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		Stetho.initializeWithDefaults(this);
 		TwitterApplication.context = this;
 		CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
 				.setFontAttrId(R.attr.fontPath)
@@ -29,4 +32,5 @@ public class TwitterApplication extends com.activeandroid.app.Application {
 	public static TwitterClient getRestClient() {
 		return (TwitterClient) TwitterClient.getInstance(TwitterClient.class, TwitterApplication.context);
 	}
+
 }

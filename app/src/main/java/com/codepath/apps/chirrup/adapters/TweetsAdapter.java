@@ -1,6 +1,7 @@
 package com.codepath.apps.chirrup.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
+import com.codepath.apps.chirrup.activities.ProfileActivity;
 import com.codepath.apps.chirrup.decorators.LinkifiedTextView;
 import com.codepath.apps.chirrup.models.Tweet;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -57,7 +61,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     //bind data to the viewholder
     @Override
     public void onBindViewHolder(TweetsAdapter.ViewHolder viewHolder, int position) {
-        Tweet tweet = mTweets.get(position);
+        final Tweet tweet = mTweets.get(position);
 
         TextView tvUserName = viewHolder.tvUserName;
         TextView tvScreenName = viewHolder.tvScreenName;
@@ -65,7 +69,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvRelativeTime = viewHolder.tvRelativeTime;
         ImageView ivProfileImg = viewHolder.ivProfileImg;
         ImageView ivPhoto = viewHolder.ivPhoto;
-        ImageView ivRetweet = viewHolder.ivRetweet;
+        ImageView ivRetweetsCount = viewHolder.ivRetweetsCount;
         ImageView ivLike = viewHolder.ivLike;
 
         TextView tvRetweetCount = viewHolder.tvRetweetCount;
@@ -78,9 +82,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         tvLikeCount.setText("");
 
         if (tweet.getRetweetCount() > 0) {
-            ivRetweet.setImageResource(0);
+            ivRetweetsCount.setImageResource(0);
             tvRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
-            ivRetweet.setImageDrawable(getContext().getResources().getDrawable(R.drawable.retweet_on));
+            ivRetweetsCount.setImageDrawable(getContext().getResources().getDrawable(R.drawable.retweet_on));
         }
         if (tweet.getFavouritesCount() > 0) {
             ivLike.setImageResource(0);
@@ -93,6 +97,14 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ivProfileImg.setImageResource(android.R.color.transparent);
         ivPhoto.setImageResource(android.R.color.transparent);
 
+        ivProfileImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ProfileActivity.class);
+                intent.putExtra("user", Parcels.wrap(tweet.getUser()));
+                getContext().startActivity(intent);
+            }
+        });
         Glide.with(getContext()).load(tweet.getUser().getProfileImageUrl()).bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0)).into(ivProfileImg);
         Glide.with(getContext()).load(tweet.getEntity().getMediaUrl()).bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0)).into(ivPhoto);
     }
@@ -109,7 +121,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         // for any view that will be set as you render a row
         public TextView tvUserName, tvRelativeTime, tvScreenName, tvLikeCount, tvRetweetCount;
         public LinkifiedTextView tvBody;
-        public ImageView ivProfileImg, ivPhoto, ivLike, ivRetweet;
+        public ImageView ivProfileImg, ivPhoto, ivLike, ivRetweetsCount;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -126,7 +138,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvRelativeTime = (TextView) itemView.findViewById(R.id.tvRelativeTime);
             ivProfileImg = (ImageView) itemView.findViewById(R.id.ivProfileImg);
             ivPhoto = (ImageView) itemView.findViewById(R.id.ivPhoto);
-            ivRetweet = (ImageView) itemView.findViewById(R.id.ivRetweet);
+            ivRetweetsCount = (ImageView) itemView.findViewById(R.id.ivRetweetsCount);
             ivLike = (ImageView) itemView.findViewById(R.id.ivLike);
         }
     }

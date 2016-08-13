@@ -41,7 +41,7 @@ The following **bonus** features are implemented:
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you can get done to improve the app functionality!
+* [x] Used Spans to [Style Sections of Text] (http://guides.codepath.com/android/Working-with-the-TextView#using-spans-to-style-sections-of-text)
 
 ## Video Walkthrough
 

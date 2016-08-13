@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.scribe.builder.api.Api;
@@ -52,12 +53,31 @@ public class TwitterClient extends OAuthBaseClient {
 
 	public void getUserProfile(AsyncHttpResponseHandler  repsonseHandler){
 		String apiUrl = getApiUrl("account/verify_credentials.json");
-		//specify the params
-		RequestParams params = new RequestParams();
 		getClient().get(apiUrl, null, repsonseHandler);
+
 	}
 
-	/************ POST METHODS ********************/
+	public void getUserTimeline(String screenName, AsyncHttpResponseHandler  repsonseHandler){
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		//specify the params
+        //specify the params
+        RequestParams params = new RequestParams();
+        params.put("count", 25);
+        params.put("screen_name", screenName);
+		getClient().get(apiUrl, params, repsonseHandler);
+	}
+
+    public void getMentionsTimeline(JsonHttpResponseHandler repsonseHandler, String sinceOrMaxId, long count) {
+        String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+        //specify the params
+        RequestParams params = new RequestParams();
+        params.put("count", 25);
+
+        getClient().get(apiUrl, params, repsonseHandler);
+    }
+
+
+    /************ POST METHODS ********************/
 
 	public void composeTweet(AsyncHttpResponseHandler  repsonseHandler, String tweetBody){
         String apiUrl = getApiUrl("statuses/update.json");

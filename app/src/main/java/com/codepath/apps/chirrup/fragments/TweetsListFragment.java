@@ -3,14 +3,19 @@ package com.codepath.apps.chirrup.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.activeandroid.query.Select;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.activities.DetailActivity;
 import com.codepath.apps.chirrup.adapters.TweetsAdapter;
@@ -18,6 +23,7 @@ import com.codepath.apps.chirrup.decorators.DividerItemDecoration;
 import com.codepath.apps.chirrup.decorators.ItemClickSupport;
 import com.codepath.apps.chirrup.models.Tweet;
 import com.codepath.apps.chirrup.utils.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.chirrup.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,22 +34,62 @@ import butterknife.ButterKnife;
 /**
  * Created by santoshag on 8/9/16.
  */
-public class TweetsListFragment extends Fragment {
+public abstract class TweetsListFragment extends Fragment {
 
-
+    @BindView(R.id.swipeContainer)
+    SwipeRefreshLayout swipeContainer;
+    @Nullable
+    @BindView(R.id.fabCompose)
+    FloatingActionButton fabCompose;
     @BindView(R.id.rvTweets)
     RecyclerView rvTweets;
     private TweetsAdapter tweetsAdapter;
     private ArrayList<Tweet> tweetList;
+    @Nullable
+    @BindView(R.id.ivAirplaneMode)
+    ImageView ivAirplaneMode;
+
+    Boolean airplaneMode = false;
 
     //inflation
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.i("TweetsListFragment", "onCreateView");
+
         View v = inflater.inflate(R.layout.fragment_tweets_list, container, false);
         ButterKnife.bind(this, v);
         setupTweetsAdapter();
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("TweetsListFragment", "onResume");
+
+        if (!Utils.checkForInternet()) {
+            airplaneMode = true;
+            Toast.makeText(getActivity(), "Not connected to network. Using offline tweets.", Toast.LENGTH_SHORT).show();
+            //fabCompose.setVisibility(View.INVISIBLE);
+            swipeContainer.setEnabled(false);
+            List<Tweet> queryResults = new Select().from(Tweet.class)
+                    .orderBy("remote_id DESC").execute();
+            // Load the result into the adapter using `addAll`
+            Log.i("sql", "loading data from offline: " + queryResults.size() + " " + queryResults.get(1).getUser().getProfileImageUrl());
+            //ivAirplaneMode.setVisibility(View.VISIBLE);
+            addAll(queryResults, true);
+        } else {
+            airplaneMode = false;
+            Log.i("TweetsListFragment", "airplaneMode false");
+
+            //fabCompose.setVisibility(View.VISIBLE);
+            //ivAirplaneMode.setVisibility(View.GONE);
+            //get timeline here
+            populateTimeline("since_id", (long) 1);
+            //setup swipe to refresh
+            setupSwipeToRefreshView();
+        }
     }
 
     //creation life cycle event
@@ -91,17 +137,36 @@ public class TweetsListFragment extends Fragment {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
                 //limit totalItemsCount to void "Rate limit exceeded" error
-//                if (totalItemsCount < 60) {
-//                    getActivity().populateMoreTimeline();
-//                }
+                //load more only when internet is available
+                if (!airplaneMode && totalItemsCount < 60) {
+                    populateTimeline("max_id", Tweet.lastTweetId);
+                }else{
+                    Toast.makeText(getActivity(), "Dont want to exceed rate: " + totalItemsCount, Toast.LENGTH_LONG ).show();
+                }
             }
         });
 
     }
 
+    private void setupSwipeToRefreshView() {
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                populateTimeline("since_id", (long) 1);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+    }
 
-
-    public void addAll(List<Tweet> list, Boolean clearTweetListBeforeAdd){
+    protected void addAll(List<Tweet> list, Boolean clearTweetListBeforeAdd){
         if(clearTweetListBeforeAdd){
             tweetList.clear();
         }
@@ -109,5 +174,10 @@ public class TweetsListFragment extends Fragment {
         tweetsAdapter.notifyDataSetChanged();
     }
 
+    protected void onFinishLoadMore(){
+        swipeContainer.setRefreshing(false);
+    }
+
+    protected abstract void populateTimeline(String sinceOrMaxId, long count);
 
 }

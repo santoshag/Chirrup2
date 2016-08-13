@@ -1,5 +1,7 @@
 package com.codepath.apps.chirrup.models;
 
+import android.util.Log;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -38,6 +40,13 @@ public class Tweet extends Model{
     @Column(name = "favourites_count")
     private int favouritesCount = 0;
 
+    public Boolean getRetweeted() {
+        return retweeted;
+    }
+
+    @Column(name = "retweeted")
+    private Boolean retweeted;
+
     public int getFavouritesCount() {
         return favouritesCount;
     }
@@ -75,6 +84,7 @@ public class Tweet extends Model{
     }
 
     public static Tweet fromJson(JSONObject jsonObject){
+
         Tweet tweet = new Tweet();
         try {
             tweet.body = jsonObject.getString("text");
@@ -92,6 +102,12 @@ public class Tweet extends Model{
             tweet.entity = entity;
             entity.save();
             tweet.relativeDate = getRelativeTimeAgo(jsonObject.getString("created_at"));
+
+            tweet.retweeted = jsonObject.getBoolean("retweeted");
+            if(tweet.retweeted){
+                Log.i("TWeet", jsonObject.toString());
+            }
+
             tweet.save();
 
         } catch (JSONException e) {
