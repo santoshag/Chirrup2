@@ -26,14 +26,14 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
  */
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
-    // Store a member variable for the contacts
+    // Store a member variable for the tweets
     private List<Tweet> mTweets;
     // Store the context for easy access
     private Context mContext;
 
-    // Pass in the contact array into the constructor
-    public TweetsAdapter(Context context, List<Tweet> contacts) {
-        mTweets = contacts;
+    // Pass in the tweet array into the constructor
+    public TweetsAdapter(Context context, List<Tweet> tweets) {
+        mTweets = tweets;
         mContext = context;
     }
 

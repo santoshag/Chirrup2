@@ -14,7 +14,6 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
         android:background="@android:color/white"
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context="com.codepath.apps.chirrup.activities.ProfileActivity">
@@ -83,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:paddingRight="20dp"
+                android:onClick="onFollowingCountClick"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvDescription"
                 android:text="New Text" />
@@ -93,6 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvDescription"
                 android:layout_toRightOf="@+id/tvFollowing"
+                android:onClick="onFollowersCountClick"
                 android:text="New Text" />
         </RelativeLayout>
 

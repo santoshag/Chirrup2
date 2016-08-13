@@ -1,13 +1,18 @@
 package com.codepath.apps.chirrup.models;
 
+import android.util.Log;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
+
+import java.util.ArrayList;
 
 /**
  * Created by santoshag on 8/5/16.
@@ -107,4 +112,20 @@ public class User extends Model{
     }
 
 
+    public static ArrayList<User> fromJSONArray(JSONArray jsonArray){
+
+        ArrayList<User> result = new ArrayList<>();
+        for(int i=0; i< jsonArray.length(); i++){
+
+            try {
+                Log.i("FOLLOW", jsonArray.getJSONObject(i).toString());
+                User user = fromJSON(jsonArray.getJSONObject(i));
+                result.add(user);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return result;
+    }
 }

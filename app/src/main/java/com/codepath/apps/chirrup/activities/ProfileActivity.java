@@ -1,6 +1,7 @@
 package com.codepath.apps.chirrup.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.MetricAffectingSpan;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -52,6 +54,12 @@ public class ProfileActivity extends AppCompatActivity {
     @BindView(R.id.toolbarTitle)
     TextView toolbarTitle;
 
+
+    public enum Follow {
+        Following, Follower;
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +72,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             //get screen name
-            User user = (User) Parcels.unwrap(getIntent().getParcelableExtra("user"));
+            user = (User) Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
             String screenName = user.getScreenName();
             UserTimelineFragment fragmentUserTimeline = UserTimelineFragment.newInstance(screenName);
@@ -160,6 +168,21 @@ public class ProfileActivity extends AppCompatActivity {
     protected void attachBaseContext(Context context) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(context));
     }
+
+    public void onFollowingCountClick(View view) {
+        Intent intent = new Intent(this, FollowActivity.class);
+        intent.putExtra("user", Parcels.wrap(user));
+        intent.putExtra("Follow", Follow.Following);
+        startActivity(intent);
+    }
+
+    public void onFollowersCountClick(View view) {
+        Intent intent = new Intent(this, FollowActivity.class);
+        intent.putExtra("user", Parcels.wrap(user));
+        intent.putExtra("Follow", Follow.Follower);
+        startActivity(intent);
+    }
+
 
     public class CustomTypefaceSpan extends MetricAffectingSpan
     {
