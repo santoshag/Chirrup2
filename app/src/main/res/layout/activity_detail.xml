@@ -40,8 +40,8 @@
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/ivProfileImg"
             android:layout_toRightOf="@+id/ivProfileImg"
-            android:textSize="18sp"
             android:textColor="#000000"
+            android:textSize="18sp"
             tools:text="MyName" />
 
         <TextView
@@ -64,9 +64,9 @@
             android:layout_below="@id/ivProfileImg"
             android:layout_toEndOf="@+id/ivProfileImg"
             android:autoLink="all"
+            android:lineSpacingExtra="2dp"
             android:linksClickable="true"
             android:paddingTop="10dp"
-            android:lineSpacingExtra="2dp"
             android:textColor="#000000"
             android:textColorLink="@color/colorPrimary"
             android:textSize="18sp"
@@ -76,8 +76,8 @@
             android:id="@+id/ivPhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvBody"
             android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tvBody"
             android:paddingTop="5dp"
             tools:src="@drawable/twitter_icon" />
 
@@ -89,60 +89,80 @@
             android:layout_below="@+id/ivPhoto"
             android:paddingTop="5dp"
             android:textColor="#000000">
-
         </TextView>
 
-        <LinearLayout
-            android:id="@+id/llTweetHelpers"
-            android:layout_width="match_parent"
+
+        <com.like.LikeButton
+            android:id="@+id/ivReply"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_below="@+id/tvTweetTime"
-            android:layout_alignParentLeft="true"
-            android:orientation="horizontal"
-            android:paddingBottom="-5dp"
+            app:anim_scale_factor="2.5"
+            app:circle_start_color="#FFFFFF"
+            app:circle_end_color="#FFFFFF"
+            app:dots_primary_color="#FFFFFF"
+            app:dots_secondary_color="#FFFFFF"
+            app:icon_size="25dp"
+            android:paddingLeft="30dp"
             android:paddingTop="10dp"
-            android:weightSum="1">
+            app:icon_type="heart"
+            app:is_enabled="true"
+            app:like_drawable="@drawable/reply"
+            app:liked="false"
+            app:unlike_drawable="@drawable/reply" />
 
-            <ImageView
-                android:id="@+id/ivReply"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_gravity="left"
-                android:layout_weight=".33"
-                android:onClick="replyToTweet"
-                android:src="@drawable/reply" />
+        <com.like.LikeButton
+            android:id="@+id/ivRetweetsCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="replyToTweet"
+            android:layout_below="@+id/tvTweetTime"
+            android:layout_toRightOf="@+id/ivReply"
+            android:paddingLeft="40dp"
+            android:paddingTop="5dp"
+            app:anim_scale_factor="2.3"
+            app:icon_size="30dp"
+            app:circle_start_color="#C8E6C9"
+            app:circle_end_color="#19CF86"
+            app:dots_primary_color="#C8E6C9"
+            app:dots_secondary_color="#19CF86"
+            app:icon_type="heart"
+            app:is_enabled="true"
+            app:like_drawable="@drawable/retweet_on"
+            app:liked="false"
+            app:unlike_drawable="@drawable/retweet_off" />
 
-            <ImageView
-                android:id="@+id/ivRetweetsCount"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_weight=".12"
-                android:onClick="reTweet"
-                android:src="@drawable/retweet_off" />
+        <TextView
+            android:id="@+id/tvRetweetCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvTweetTime"
+            android:layout_toRightOf="@+id/ivRetweetsCount"
+            android:paddingTop="28dp"
+            android:text="" />
 
-            <TextView
-                android:id="@+id/tvRetweetCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".21"
-                android:text="" />
+        <com.like.LikeButton
+            android:id="@+id/ivLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:anim_scale_factor="2.5"
+            app:icon_size="20dp"
+            app:icon_type="heart"
+            app:is_enabled="true"
+            app:liked="false"
+            android:layout_below="@+id/tvTweetTime"
+            android:layout_toRightOf="@+id/ivRetweetsCount"
+            android:paddingLeft="50dp"
+            android:paddingTop="15dp"/>
 
-            <ImageView
-                android:id="@+id/ivLike"
-                android:onClick="favourTweet"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_weight=".12"
-                android:src="@drawable/like_off" />
-
-            <TextView
-                android:id="@+id/tvLikeCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".21"
-                android:text="" />
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/tvLikeCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_below="@+id/tvTweetTime"
+            android:layout_toRightOf="@+id/ivLike"
+            android:paddingTop="30dp"/>
     </RelativeLayout>
+
 </android.support.design.widget.CoordinatorLayout>

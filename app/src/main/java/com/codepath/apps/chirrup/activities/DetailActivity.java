@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +18,8 @@ import com.codepath.apps.chirrup.fragments.ReplyTweetFragment;
 import com.codepath.apps.chirrup.models.Entity;
 import com.codepath.apps.chirrup.models.Tweet;
 import com.codepath.apps.chirrup.models.User;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONException;
@@ -51,9 +52,11 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.tvRetweetCount)
     TextView tvRetweetCount;
     @BindView(R.id.ivRetweetsCount)
-    ImageView ivRetweetsCount;
+    LikeButton ivRetweetsCount;
     @BindView(R.id.ivLike)
-    ImageView ivLike;
+    LikeButton ivLike;
+    @BindView(R.id.ivReply)
+    LikeButton ivReply;
 
     TwitterClient client;
 
@@ -85,7 +88,7 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    private void loadViewItems(Tweet tweet, User user, Entity entity) {
+    private void loadViewItems(final Tweet tweet, User user, Entity entity) {
         tvUserName.setText(user.getName());
         tvScreenName.setText(user.getScreenName());
         tvBody.setText(tweet.getBody());
@@ -98,19 +101,60 @@ public class DetailActivity extends AppCompatActivity {
         tvLikeCount.setText("");
 
         if (tweet.getRetweetCount() > 0) {
-            ivRetweetsCount.setImageResource(0);
             tvRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
-            ivRetweetsCount.setImageDrawable(this.getResources().getDrawable(R.drawable.retweet_on));
+        }
+        if(tweet.getRetweeted()){
+            ivRetweetsCount.setLiked(true);
+
         }
         if (tweet.getFavoritesCount() > 0) {
-            ivLike.setImageResource(0);
             tvLikeCount.setText(String.valueOf(tweet.getFavoritesCount()));
-            ivLike.setImageDrawable(this.getResources().getDrawable(R.drawable.like_on));
+            ivLike.setLiked(true);
 
         }
+        if(tweet.getfavorited()){
+            ivLike.setLiked(true);
+
+        }
+
+        ivLike.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                favorTweet(tweet, tvLikeCount, ivLike);
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                favorTweet(tweet, tvLikeCount, ivLike);
+            }
+        });
+
+        ivRetweetsCount.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                reTweet(tweet, tvRetweetCount, ivRetweetsCount);
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                reTweet(tweet, tvRetweetCount, ivRetweetsCount);
+            }
+        });
+
+        ivReply.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                replyToTweet();
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                replyToTweet();
+            }
+        });
     }
 
-    private void favorTweet(final Tweet tweet, final TextView tvFavorCount, final ImageView ivFavor) {
+    private void favorTweet(final Tweet tweet, final TextView tvFavorCount, final LikeButton ivFavor) {
 
         client.favorTweet(new JsonHttpResponseHandler(){
             @Override
@@ -119,9 +163,10 @@ public class DetailActivity extends AppCompatActivity {
                 try {
                     if(response.getBoolean("favorited")){
                         tweet.setFavorite_count(Integer.parseInt(response.getString("favorite_count")));
-                        ivFavor.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.like_on));
+                        ivLike.setLiked(true);
                     }else{
-                        ivFavor.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.like_off));
+                        ivLike.setLiked(false);
+
                     }
                     tweet.setFavorited(response.getBoolean("favorited"));
                     if(response.getLong("favorite_count") > 0) {
@@ -150,7 +195,7 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
-    private void reTweet(final Tweet tweet, final TextView tvRetweetCount, final ImageView ivRetweetCount) {
+    private void reTweet(final Tweet tweet, final TextView tvRetweetCount, final LikeButton ivRetweetCount) {
 
         client.reTweet(new JsonHttpResponseHandler(){
             @Override
@@ -159,9 +204,10 @@ public class DetailActivity extends AppCompatActivity {
                 try {
                     if(response.getBoolean("retweeted")){
                         tweet.setFavorite_count(Integer.parseInt(response.getString("retweet_count")));
-                        ivRetweetCount.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.retweet_on));
-                    }else{
-                        ivRetweetCount.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.retweet_off));
+                        ivRetweetCount.setLiked(true);
+
+                    }else {
+                        ivRetweetCount.setLiked(false);
                     }
                     tweet.setRetweeted(response.getBoolean("retweeted"));
                     if(response.getLong("retweet_count") > 0) {
@@ -186,7 +232,8 @@ public class DetailActivity extends AppCompatActivity {
         }, tweet.getRetweeted(), tweet.getRemoteId());
 
     }
-    public void replyToTweet(View view) {
+
+    public void replyToTweet() {
 
         ReplyTweetFragment myDialog = ReplyTweetFragment.newInstance(true, tweet, user);
         FragmentManager fm = getSupportFragmentManager();
@@ -199,13 +246,6 @@ public class DetailActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(context));
     }
 
-    public void reTweet(View view) {
-        reTweet(tweet, tvRetweetCount, ivRetweetsCount);
-    }
-
-    public void favourTweet(View view) {
-        favorTweet(tweet, tvLikeCount, ivLike);
-    }
 
 
 }
