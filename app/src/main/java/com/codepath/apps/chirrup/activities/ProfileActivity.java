@@ -21,22 +21,25 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
+import com.codepath.apps.chirrup.TwitterApplication;
 import com.codepath.apps.chirrup.TwitterClient;
 import com.codepath.apps.chirrup.fragments.UserTimelineFragment;
 import com.codepath.apps.chirrup.models.User;
 import com.codepath.apps.chirrup.utils.Utils;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class ProfileActivity extends AppCompatActivity {
 
     TwitterClient client;
-    User user;
     @BindView(R.id.ivProfilePic)
     ImageView ivProfilePic;
     @BindView(R.id.tvName)
@@ -58,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
         Following, Follower;
     };
 
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,32 +73,68 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        client = TwitterApplication.getRestClient();
+
         if (savedInstanceState == null) {
             //get screen name
-            user = (User) Parcels.unwrap(getIntent().getParcelableExtra("user"));
+            if(getIntent().getBooleanExtra("from_user_span", false)) {
 
-            String screenName = user.getScreenName();
-            UserTimelineFragment fragmentUserTimeline = UserTimelineFragment.newInstance(screenName);
-            //display user fragment dynamically within this activity
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.flContainer, fragmentUserTimeline);
-            ft.commit();
+                Log.i("name", getIntent().getStringExtra("screen_name"));
+                lookupUser(getIntent().getStringExtra("screen_name"));
+            }else{
+                user = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+                setupView();
+            }
 
-
-            toolbarTitle.setText(user.getScreenName());
-            tvName.setText(user.getName());
-            tvScreenName.setText(user.getScreenName());
-            tvName.setText(user.getName());
-            tvDescription.setText(user.getDescription());
-            tvFollowers.setText(getCustomTextForFollow("FOLLOWERS", user.getFollowersCount()), TextView.BufferType.EDITABLE);
-            tvFollowing.setText(getCustomTextForFollow("FOLLOWING", user.getFollowingCount()), TextView.BufferType.EDITABLE);
-
-            Log.i("user.getProfileImageU", user.getProfileImageUrl());
-            Glide.with(getApplicationContext()).load(user.getProfileImageUrl()).bitmapTransform(new RoundedCornersTransformation(getApplicationContext(), 30, 0)).into(ivProfilePic);
 
         }
     }
 
+    private void setupView(){
+        String screenName = user.getScreenName();
+        UserTimelineFragment fragmentUserTimeline = UserTimelineFragment.newInstance(screenName);
+        //display user fragment dynamically within this activity
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.flContainer, fragmentUserTimeline);
+        ft.commit();
+
+
+        toolbarTitle.setText(user.getScreenName());
+        tvName.setText(user.getName());
+        tvScreenName.setText(user.getScreenName());
+        tvName.setText(user.getName());
+        tvDescription.setText(user.getDescription());
+        tvFollowers.setText(getCustomTextForFollow("FOLLOWERS", user.getFollowersCount()), TextView.BufferType.EDITABLE);
+        tvFollowing.setText(getCustomTextForFollow("FOLLOWING", user.getFollowingCount()), TextView.BufferType.EDITABLE);
+
+        Log.i("user.getProfileImageU", user.getProfileImageUrl());
+        Glide.with(getApplicationContext()).load(user.getProfileImageUrl()).bitmapTransform(new RoundedCornersTransformation(getApplicationContext(), 30, 0)).into(ivProfilePic);
+    }
+
+    private void lookupUser(String screenName){
+        client.lookupUser(screenName, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                Log.d("DEBUG", "success" + response.toString());
+                user = User.fromJSON(response);
+                setupView();
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.d("DEBUG", "onFailure" + responseString);
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG", "onFailure" + errorResponse.toString());
+
+            }
+        });
+    }
 
     private SpannableStringBuilder getCustomTextForFollow(String str, int count) {
 

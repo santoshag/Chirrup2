@@ -10,15 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.TwitterApplication;
 import com.codepath.apps.chirrup.TwitterClient;
 import com.codepath.apps.chirrup.activities.ProfileActivity;
+import com.codepath.apps.chirrup.activities.SearchActivity;
 import com.codepath.apps.chirrup.decorators.LinkifiedTextView;
 import com.codepath.apps.chirrup.fragments.ReplyTweetFragment;
 import com.codepath.apps.chirrup.models.Tweet;
+import com.codepath.apps.chirrup.utils.PatternEditableBuilder;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONException;
@@ -26,6 +29,7 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -92,6 +96,36 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         tvUserName.setText(tweet.getUser().getName());
         tvScreenName.setText(tweet.getUser().getScreenName());
         tvBody.setText(tweet.getBody());
+
+        new PatternEditableBuilder().
+                addPattern(Pattern.compile("\\@(\\w+)"), getContext().getResources().getColor(R.color.colorPrimary),
+                        new PatternEditableBuilder.SpannableClickedListener() {
+                            @Override
+                            public void onSpanClicked(String screenName) {
+
+                                Intent intent = new Intent(mContext, ProfileActivity.class);
+                                intent.putExtra("from_user_span", true);
+                                intent.putExtra("screen_name", screenName.substring(1));
+                                getContext().startActivity(intent);
+                                Toast.makeText(getContext(), "Clicked username: " + screenName,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }).into(tvBody);
+
+        new PatternEditableBuilder().
+                addPattern(Pattern.compile("\\#(\\w+)"), getContext().getResources().getColor(R.color.colorPrimary),
+                        new PatternEditableBuilder.SpannableClickedListener() {
+                            @Override
+                            public void onSpanClicked(String hashtag) {
+
+                                Intent intent = new Intent(getContext(), SearchActivity.class);
+                                intent.putExtra("q", hashtag);
+                                getContext().startActivity(intent);
+                                Toast.makeText(getContext(), "Clicked hashtag: " + hashtag,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }).into(tvBody);
+
         tvRetweetCount.setText("");
         tvLikeCount.setText("");
 
@@ -111,6 +145,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         if(tweet.getRetweeted()){
             ivRetweetsCount.setImageDrawable(getContext().getResources().getDrawable(R.drawable.retweet_on));
         }
+
 //        TextViewUtils.stripUnderlines(tvBody);
         tvRelativeTime.setText(tweet.getRelativeDate());
         ivProfileImg.setImageResource(android.R.color.transparent);
