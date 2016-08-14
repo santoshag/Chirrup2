@@ -2,6 +2,7 @@ package com.codepath.apps.chirrup.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.activities.ProfileActivity;
 import com.codepath.apps.chirrup.decorators.LinkifiedTextView;
+import com.codepath.apps.chirrup.fragments.NewTweetFragment;
 import com.codepath.apps.chirrup.models.Tweet;
 
 import org.parceler.Parcels;
@@ -30,11 +32,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     private List<Tweet> mTweets;
     // Store the context for easy access
     private Context mContext;
+    FragmentManager mFragmentManager;
 
     // Pass in the tweet array into the constructor
-    public TweetsAdapter(Context context, List<Tweet> tweets) {
+    public TweetsAdapter(Context context, List<Tweet> tweets, FragmentManager supportFragmentManager) {
         mTweets = tweets;
         mContext = context;
+        mFragmentManager = supportFragmentManager;
     }
 
     // Easy access to the context object in the recyclerview
@@ -71,6 +75,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ImageView ivPhoto = viewHolder.ivPhoto;
         ImageView ivRetweetsCount = viewHolder.ivRetweetsCount;
         ImageView ivLike = viewHolder.ivLike;
+        ImageView ivReply = viewHolder.ivReply;
 
         TextView tvRetweetCount = viewHolder.tvRetweetCount;
         TextView tvLikeCount = viewHolder.tvLikeCount;
@@ -100,11 +105,20 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ivProfileImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), ProfileActivity.class);
+                Intent intent = new Intent(mContext, ProfileActivity.class);
                 intent.putExtra("user", Parcels.wrap(tweet.getUser()));
                 getContext().startActivity(intent);
             }
         });
+
+        ivReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NewTweetFragment myDialog = NewTweetFragment.newInstance(true, tweet, tweet.getUser());
+                myDialog.show(mFragmentManager, "reply tweet");
+            }
+        });
+
         Glide.with(getContext()).load(tweet.getUser().getProfileImageUrl()).bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0)).into(ivProfileImg);
         Glide.with(getContext()).load(tweet.getEntity().getMediaUrl()).bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0)).into(ivPhoto);
     }
@@ -121,7 +135,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         // for any view that will be set as you render a row
         public TextView tvUserName, tvRelativeTime, tvScreenName, tvLikeCount, tvRetweetCount;
         public LinkifiedTextView tvBody;
-        public ImageView ivProfileImg, ivPhoto, ivLike, ivRetweetsCount;
+        public ImageView ivProfileImg, ivPhoto, ivLike, ivRetweetsCount, ivReply;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -138,6 +152,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvRelativeTime = (TextView) itemView.findViewById(R.id.tvRelativeTime);
             ivProfileImg = (ImageView) itemView.findViewById(R.id.ivProfileImg);
             ivPhoto = (ImageView) itemView.findViewById(R.id.ivPhoto);
+            ivReply = (ImageView) itemView.findViewById(R.id.ivReply);
             ivRetweetsCount = (ImageView) itemView.findViewById(R.id.ivRetweetsCount);
             ivLike = (ImageView) itemView.findViewById(R.id.ivLike);
         }

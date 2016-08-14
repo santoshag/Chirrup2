@@ -6,10 +6,12 @@ import com.activeandroid.annotation.Table;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 /**
  * Created by santoshag on 8/7/16.
  */
+@Parcel(analyze={Entity.class})   // add Parceler annotation here
 @Table(name = "Entities")
 public class Entity extends Model {
 
@@ -31,7 +33,7 @@ public class Entity extends Model {
             entity.media_url = Media.getMediaUrl(jsonObject.getJSONArray("media"));
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return entity;
     }

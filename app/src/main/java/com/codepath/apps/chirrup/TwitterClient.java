@@ -52,7 +52,7 @@ public class TwitterClient extends OAuthBaseClient {
 		getClient().get(apiUrl, params, repsonseHandler);
 	}
 
-	public void getUserProfile(AsyncHttpResponseHandler  repsonseHandler){
+	public void getLoggedUserProfile(AsyncHttpResponseHandler  repsonseHandler){
 		String apiUrl = getApiUrl("account/verify_credentials.json");
 		getClient().get(apiUrl, null, repsonseHandler);
 
@@ -68,11 +68,18 @@ public class TwitterClient extends OAuthBaseClient {
 		getClient().get(apiUrl, params, repsonseHandler);
 	}
 
-    public void getMentionsTimeline(JsonHttpResponseHandler repsonseHandler, String sinceOrMaxId, long count) {
+    public void getMentionsTimeline(JsonHttpResponseHandler repsonseHandler, String sinceOrMaxId, long id) {
         String apiUrl = getApiUrl("statuses/mentions_timeline.json");
         //specify the params
         RequestParams params = new RequestParams();
-        params.put("count", 25);
+        if(sinceOrMaxId.equals("since_id")) {
+
+            params.put("since_id", id);
+            params.put("count", 25);
+
+        }else {
+            params.put(sinceOrMaxId, id);
+        }
         getClient().get(apiUrl, params, repsonseHandler);
     }
 
@@ -111,14 +118,27 @@ public class TwitterClient extends OAuthBaseClient {
         getClient().get(apiUrl, params, repsonseHandler);
     }
 
+
+    public void getDirectMessages(JsonHttpResponseHandler repsonseHandler) {
+        String apiUrl = getApiUrl("direct_messages.json");
+        //specify the params
+        RequestParams params = new RequestParams();
+        params.put("count", 20);
+        params.put("since_id", 1);
+
+        getClient().get(apiUrl, null, repsonseHandler);
+    }
+
     /************ POST METHODS ********************/
 
-	public void composeTweet(AsyncHttpResponseHandler  repsonseHandler, String tweetBody){
+	public void composeTweet(AsyncHttpResponseHandler  repsonseHandler, String tweetBody, Boolean isReply, long id){
         String apiUrl = getApiUrl("statuses/update.json");
         //specify the params
         RequestParams params = new RequestParams();
-
         params.put("status", tweetBody);
+        if(isReply){
+            params.put("in_reply_to_status_id", id);
+        }
         getClient().post(apiUrl, params, repsonseHandler);
     }
 

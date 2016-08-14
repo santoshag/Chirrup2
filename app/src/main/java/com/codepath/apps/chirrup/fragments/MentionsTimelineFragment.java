@@ -50,20 +50,20 @@ public class MentionsTimelineFragment extends TweetsListFragment {
                     new Delete().from(User.class).execute(); // all records
                 }
                 addAll(Tweet.fromJsonArray(response), clearTweetListBeforeAdd);
-                swipeContainer.setRefreshing(false);
+                onFinishLoadMore();
 
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.d("DEBUG", "onFailure" + responseString.toString());
-                swipeContainer.setRefreshing(false);
+                onFinishLoadMore();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.d("DEBUG", "onFailure" + errorResponse.toString());
-
+                onFinishLoadMore();
             }
         }, sinceOrMaxId, count);
     }

@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.TwitterApplication;
 import com.codepath.apps.chirrup.TwitterClient;
+import com.codepath.apps.chirrup.fragments.DirectMessagesFragment;
 import com.codepath.apps.chirrup.fragments.HomeTimelineFragment;
 import com.codepath.apps.chirrup.fragments.MentionsTimelineFragment;
 import com.codepath.apps.chirrup.fragments.NewTweetFragment;
@@ -47,6 +48,8 @@ public class TimelineActivity extends AppCompatActivity {
     ImageView ivProfilePhoto;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
+    public static String loggedUserScreenName;
 
 
     private TwitterClient client;
@@ -78,12 +81,13 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void setupProfileImage() {
-        client.getUserProfile(new JsonHttpResponseHandler() {
+        client.getLoggedUserProfile(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     final User user = User.fromJSON(response);
                     String profileImageUrl = user.getProfileImageUrl();
                     Log.i("profile_PHOTO", profileImageUrl);
+                    loggedUserScreenName = user.getScreenName();
                     Glide.with(getApplicationContext()).load(profileImageUrl).bitmapTransform(new RoundedCornersTransformation(getApplicationContext(), 60, 0)).into(ivProfilePhoto);
                     ivProfilePhoto.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -112,8 +116,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     public void composeNewTweet(View view) {
-        NewTweetFragment myDialog = new NewTweetFragment();
-
+        NewTweetFragment myDialog = NewTweetFragment.newInstance(false, null, null);
         FragmentManager fm = getSupportFragmentManager();
         myDialog.show(fm, "new tweet");
 
@@ -160,7 +163,7 @@ public class TimelineActivity extends AppCompatActivity {
 
 
     public class TweetsPagerAdapter extends FragmentPagerAdapter{
-        private String tabTitles[] = { "Home", "Mentions"};
+        private String tabTitles[] = { "Home", "Mentions", "Msgs"};
 
         //adapter gets the manager to insert or remove fragment from activity
         public TweetsPagerAdapter(FragmentManager fm){
@@ -174,6 +177,9 @@ public class TimelineActivity extends AppCompatActivity {
                 return new HomeTimelineFragment();
             }else if(position ==1){
                 return new MentionsTimelineFragment();
+            }else if(position ==2){
+                return new DirectMessagesFragment();
+
             }else{
                 return null;
             }

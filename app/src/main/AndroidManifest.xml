@@ -21,7 +21,7 @@
             android:value="3" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="com.codepath.apps.chirrup.models.Tweet, com.codepath.apps.chirrup.models.User, com.codepath.apps.chirrup.models.Entity" />
+            android:value="com.codepath.apps.chirrup.models.Tweet, com.codepath.apps.chirrup.models.User, com.codepath.apps.chirrup.models.Entity, com.codepath.apps.chirrup.models.DirectMessage" />
 
         <activity
             android:name=".activities.LoginActivity"

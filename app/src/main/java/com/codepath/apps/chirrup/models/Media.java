@@ -3,12 +3,14 @@ package com.codepath.apps.chirrup.models;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 
 /**
  * Created by santoshag on 8/7/16.
  */
+@Parcel(analyze={Media.class})   // add Parceler annotation here
 public class Media {
 
     String mediaUrl;

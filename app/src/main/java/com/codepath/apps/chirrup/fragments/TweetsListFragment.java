@@ -23,7 +23,8 @@ import com.codepath.apps.chirrup.decorators.DividerItemDecoration;
 import com.codepath.apps.chirrup.decorators.ItemClickSupport;
 import com.codepath.apps.chirrup.models.Tweet;
 import com.codepath.apps.chirrup.utils.EndlessRecyclerViewScrollListener;
-import com.codepath.apps.chirrup.utils.Utils;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public abstract class TweetsListFragment extends Fragment {
         super.onResume();
         Log.i("TweetsListFragment", "onResume");
 
-        if (!Utils.checkForInternet()) {
+        if (false/*!Utils.checkForInternet()*/) {
             airplaneMode = true;
             Toast.makeText(getActivity(), "Not connected to network. Using offline tweets.", Toast.LENGTH_SHORT).show();
             //fabCompose.setVisibility(View.INVISIBLE);
@@ -76,7 +77,7 @@ public abstract class TweetsListFragment extends Fragment {
             List<Tweet> queryResults = new Select().from(Tweet.class)
                     .orderBy("remote_id DESC").execute();
             // Load the result into the adapter using `addAll`
-            Log.i("sql", "loading data from offline: " + queryResults.size() + " " + queryResults.get(1).getUser().getProfileImageUrl());
+//            Log.i("sql", "loading data from offline: " + queryResults.size() + " " + queryResults.get(1).getUser().getProfileImageUrl());
             //ivAirplaneMode.setVisibility(View.VISIBLE);
             addAll(queryResults, true);
         } else {
@@ -99,7 +100,7 @@ public abstract class TweetsListFragment extends Fragment {
 
         //non referencing view jobs go here
         tweetList = new ArrayList<>();
-        tweetsAdapter = new TweetsAdapter(getActivity(), tweetList);
+        tweetsAdapter = new TweetsAdapter(getActivity(), tweetList, getActivity().getSupportFragmentManager());
 
     }
 
@@ -121,6 +122,9 @@ public abstract class TweetsListFragment extends Fragment {
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Tweet tweet = tweetList.get(position);
                         Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        intent.putExtra("tweet", Parcels.wrap(tweet));
+                        intent.putExtra("user", Parcels.wrap(tweet.getUser()));
+                        intent.putExtra("entity", Parcels.wrap(tweet.getEntity()));
                         startActivity(intent);
                     }
                 }

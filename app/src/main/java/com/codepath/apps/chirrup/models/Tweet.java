@@ -10,6 +10,7 @@ import com.codepath.apps.chirrup.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +21,7 @@ import java.util.Locale;
  * Created by santoshag on 8/5/16.
  */
 
+@Parcel(analyze={Tweet.class})   // add Parceler annotation here
 @Table(name = "Tweets")
 public class Tweet extends Model{
 
@@ -111,7 +113,7 @@ public class Tweet extends Model{
             tweet.save();
 
         } catch (JSONException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         return tweet;
     }
@@ -125,7 +127,7 @@ public class Tweet extends Model{
                 result.add(tweet);
                 lastTweetId = tweet.getRemoteId() - 1;
             } catch (JSONException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
 
@@ -143,7 +145,7 @@ public class Tweet extends Model{
             long dateMillis = sf.parse(rawJsonDate).getTime();
             relativeDate = Utils.getTimeString(dateMillis);
         } catch (ParseException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         return relativeDate;

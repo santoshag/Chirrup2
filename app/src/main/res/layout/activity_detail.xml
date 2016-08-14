@@ -1,12 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.codepath.apps.chirrup.activities.DetailActivity">
+    android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
+    tools:context=".activities.DetailActivity">
 
-</RelativeLayout>
+    <include layout="@layout/toolbar"></include>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.codepath.apps.chirrup.activities.DetailActivity">
+
+        <ImageView
+            android:id="@+id/ivProfileImg"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/twitter_icon" />
+
+        <TextView
+            android:id="@+id/tvUserName"
+            fontPath="fonts/roboto_medium.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/ivProfileImg"
+            android:layout_toRightOf="@+id/ivProfileImg"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            tools:text="MyName" />
+
+        <TextView
+            android:id="@+id/tvScreenName"
+            fontPath="fonts/roboto_light.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvUserName"
+            android:layout_toRightOf="@+id/ivProfileImg"
+            android:text="New Text"
+            android:textColor="#AAB8C2"
+            android:textSize="14sp" />
+
+        <com.codepath.apps.chirrup.decorators.LinkifiedTextView
+            android:id="@+id/tvBody"
+            fontPath="fonts/roboto_light.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/ivProfileImg"
+            android:layout_toEndOf="@+id/ivProfileImg"
+            android:autoLink="all"
+            android:linksClickable="true"
+            android:paddingTop="10dp"
+            android:lineSpacingExtra="2dp"
+            android:textColor="#000000"
+            android:textColorLink="@color/colorPrimary"
+            android:textSize="18sp"
+            tools:text="My Tweet" />
+
+        <ImageView
+            android:id="@+id/ivPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvBody"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="5dp"
+            tools:src="@drawable/twitter_icon" />
+
+        <TextView
+            android:id="@+id/tvTweetTime"
+            fontPath="fonts/roboto_light.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ivPhoto"
+            android:paddingTop="5dp"
+            android:textColor="#000000">
+
+        </TextView>
+
+        <LinearLayout
+            android:id="@+id/llTweetHelpers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/tvTweetTime"
+            android:layout_alignParentLeft="true"
+            android:orientation="horizontal"
+            android:paddingBottom="-5dp"
+            android:paddingTop="10dp"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/ivReply"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="left"
+                android:layout_weight=".33"
+                android:onClick="replyToTweet"
+                android:src="@drawable/reply" />
+
+            <ImageView
+                android:id="@+id/ivRetweetsCount"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_weight=".12"
+                android:src="@drawable/retweet_off" />
+
+            <TextView
+                android:id="@+id/tvRetweetCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight=".21"
+                android:text="" />
+
+            <ImageView
+                android:id="@+id/ivLike"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_weight=".12"
+                android:src="@drawable/like_off" />
+
+            <TextView
+                android:id="@+id/tvLikeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight=".21"
+                android:text="" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
