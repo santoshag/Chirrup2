@@ -181,12 +181,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.d("DEBUG", responseString);
 
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("DEBUG", "failure" + errorResponse.toString() + "  " + tweet.getRemoteId());
+                Log.d("DEBUG", errorResponse.toString());
 
             }
         }, tweet.getfavorited(), tweet.getRemoteId());
@@ -222,12 +223,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.d("DEBUG", responseString);
 
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("DEBUG", "failure" + errorResponse.toString() + "  " + tweet.getRemoteId());
+                Log.d("DEBUG", errorResponse.toString());
 
             }
         }, tweet.getRetweeted(), tweet.getRemoteId());

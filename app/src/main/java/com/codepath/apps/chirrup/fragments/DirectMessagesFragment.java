@@ -18,9 +18,11 @@ import com.codepath.apps.chirrup.TwitterClient;
 import com.codepath.apps.chirrup.adapters.DirectMessageAdapter;
 import com.codepath.apps.chirrup.decorators.DividerItemDecoration;
 import com.codepath.apps.chirrup.models.DirectMessage;
+import com.eyalbira.loadingdots.LoadingDots;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -40,6 +42,8 @@ public class DirectMessagesFragment extends Fragment {
     FloatingActionButton fabCompose;
     @BindView(R.id.rvMessages)
     RecyclerView rvMessages;
+    @BindView(R.id.ldProgress)
+    LoadingDots ldProgress;
     private DirectMessageAdapter messageAdapter;
     private ArrayList<DirectMessage> messageList;
 
@@ -115,7 +119,9 @@ public class DirectMessagesFragment extends Fragment {
     }
 
     protected void onFinishLoadMore(){
+
         swipeContainer.setRefreshing(false);
+        ldProgress.setVisibility(View.GONE);
     }
 
     protected  void populateTimeline(){
@@ -131,7 +137,14 @@ public class DirectMessagesFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("DEBUG", "onFailure" + responseString.toString());
+                Log.d("DEBUG", responseString);
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG", errorResponse.toString());
+
             }
         });
 

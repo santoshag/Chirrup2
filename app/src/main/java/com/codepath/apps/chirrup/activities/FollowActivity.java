@@ -92,13 +92,13 @@ public class FollowActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("DEBUG", "onFailure" + responseString.toString());
+                Log.d("DEBUG", responseString.toString());
 
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("DEBUG", "onFailure" + errorResponse.toString());
+                Log.d("DEBUG", errorResponse.toString());
 
             }
         }, user.getScreenName());
@@ -124,13 +124,13 @@ public class FollowActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("DEBUG", "onFailure" + responseString.toString());
+                Log.d("DEBUG", responseString.toString());
 
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("DEBUG", "onFailure" + errorResponse.toString());
+                Log.d("DEBUG", errorResponse.toString());
 
             }
         }, user.getScreenName());

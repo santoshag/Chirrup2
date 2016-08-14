@@ -56,14 +56,14 @@ public class HomeTimelineFragment extends TweetsListFragment{
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("DEBUG", "onFailure" + responseString.toString());
+                Log.d("DEBUG", "onFailure" + responseString);
                 onFinishLoadMore();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.d("DEBUG", "onFailure" + errorResponse.toString());
-
+                onFinishLoadMore();
             }
         }, sinceOrMaxId, count);
     }

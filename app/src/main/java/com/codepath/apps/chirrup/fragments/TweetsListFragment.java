@@ -23,6 +23,8 @@ import com.codepath.apps.chirrup.decorators.DividerItemDecoration;
 import com.codepath.apps.chirrup.decorators.ItemClickSupport;
 import com.codepath.apps.chirrup.models.Tweet;
 import com.codepath.apps.chirrup.utils.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.chirrup.utils.Utils;
+import com.eyalbira.loadingdots.LoadingDots;
 
 import org.parceler.Parcels;
 
@@ -49,7 +51,8 @@ public abstract class TweetsListFragment extends Fragment {
     @Nullable
     @BindView(R.id.ivAirplaneMode)
     ImageView ivAirplaneMode;
-
+    @BindView(R.id.ldProgress)
+    LoadingDots ldProgress;
     Boolean airplaneMode = false;
 
     //inflation
@@ -69,7 +72,7 @@ public abstract class TweetsListFragment extends Fragment {
         super.onResume();
         Log.i("TweetsListFragment", "onResume");
 
-        if (false/*!Utils.checkForInternet()*/) {
+        if (!Utils.checkForInternet()) {
             airplaneMode = true;
             Toast.makeText(getActivity(), "Not connected to network. Using offline tweets.", Toast.LENGTH_SHORT).show();
             //fabCompose.setVisibility(View.INVISIBLE);
@@ -179,6 +182,8 @@ public abstract class TweetsListFragment extends Fragment {
     }
 
     protected void onFinishLoadMore(){
+        ldProgress.setVisibility(View.GONE);
+        rvTweets.setVisibility(View.VISIBLE);
         swipeContainer.setRefreshing(false);
     }
 
