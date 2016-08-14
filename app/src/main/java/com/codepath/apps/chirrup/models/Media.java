@@ -19,7 +19,8 @@ public class Media {
         Media media = new Media();
         try {
 
-            media.mediaUrl = jsonObject.getString("media_url");
+            media.mediaUrl = jsonObject.getString("media_url") + ":large";
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -31,7 +32,7 @@ public class Media {
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
                 if (jsonArray.getJSONObject(i).has("media_url")) {
-                    String mediaUrl = jsonArray.getJSONObject(i).get("media_url").toString();
+                    String mediaUrl = jsonArray.getJSONObject(i).get("media_url").toString() + ":large";
 
                     if (mediaUrl.equals("")) {
                         continue;

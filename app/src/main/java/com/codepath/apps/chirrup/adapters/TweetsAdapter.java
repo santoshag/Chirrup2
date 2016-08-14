@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.TwitterApplication;
 import com.codepath.apps.chirrup.TwitterClient;
@@ -23,6 +22,7 @@ import com.codepath.apps.chirrup.fragments.ReplyTweetFragment;
 import com.codepath.apps.chirrup.models.Tweet;
 import com.codepath.apps.chirrup.utils.PatternEditableBuilder;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.Header;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 /**
  * Created by santoshag on 8/5/16.
@@ -184,8 +184,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             }
         });
 
-        Glide.with(getContext()).load(tweet.getUser().getProfileImageUrl()).bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0)).into(ivProfileImg);
-        Glide.with(getContext()).load(tweet.getEntity().getMediaUrl()).bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0)).into(ivPhoto);
+        Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).transform(new RoundedCornersTransformation(30, 0)).into(ivProfileImg);
+        if(!tweet.getEntity().getMediaUrl().equals("")) {
+            Picasso.with(getContext()).load(tweet.getEntity().getMediaUrl()).transform(new RoundedCornersTransformation(15, 0)).into(ivPhoto);
+        }
     }
 
     private void favorTweet(final Tweet tweet, final TextView tvFavorCount, final ImageView ivFavor) {

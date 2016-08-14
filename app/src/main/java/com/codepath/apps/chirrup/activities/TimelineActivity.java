@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.TwitterApplication;
 import com.codepath.apps.chirrup.TwitterClient;
@@ -32,6 +31,7 @@ import com.codepath.apps.chirrup.fragments.NewTweetFragment;
 import com.codepath.apps.chirrup.fragments.TweetsListFragment;
 import com.codepath.apps.chirrup.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -39,7 +39,7 @@ import org.parceler.Parcels;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class TimelineActivity extends AppCompatActivity {
@@ -100,7 +100,7 @@ public class TimelineActivity extends AppCompatActivity {
                     String profileImageUrl = user.getProfileImageUrl();
                     Log.i("profile_PHOTO", profileImageUrl);
                     loggedUserScreenName = user.getScreenName();
-                    Glide.with(getApplicationContext()).load(profileImageUrl).bitmapTransform(new RoundedCornersTransformation(getApplicationContext(), 60, 0)).into(ivProfilePhoto);
+                    Picasso.with(getApplicationContext()).load(profileImageUrl).transform(new CropCircleTransformation()).into(ivProfilePhoto);
                     ivProfilePhoto.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

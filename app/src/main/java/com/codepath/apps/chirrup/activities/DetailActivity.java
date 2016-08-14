@@ -9,7 +9,6 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.TwitterApplication;
 import com.codepath.apps.chirrup.TwitterClient;
@@ -21,6 +20,7 @@ import com.codepath.apps.chirrup.models.User;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +29,7 @@ import org.parceler.Parcels;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class DetailActivity extends AppCompatActivity {
@@ -93,9 +93,9 @@ public class DetailActivity extends AppCompatActivity {
         tvScreenName.setText(user.getScreenName());
         tvBody.setText(tweet.getBody());
         tvTweetTime.setText(tweet.getRelativeDate());
-        Glide.with(this).load(user.getProfileImageUrl()).bitmapTransform(new RoundedCornersTransformation(this, 15, 0)).into(ivProfileImg);
+        Picasso.with(this).load(user.getProfileImageUrl()).transform(new RoundedCornersTransformation(15, 0)).into(ivProfileImg);
         if (entity != null) {
-            Glide.with(this).load(tweet.getEntity().getMediaUrl()).bitmapTransform(new RoundedCornersTransformation(this, 15, 0)).into(ivPhoto);
+            Picasso.with(this).load(tweet.getEntity().getMediaUrl()).transform(new RoundedCornersTransformation(15, 0)).into(ivPhoto);
         }
         tvRetweetCount.setText("");
         tvLikeCount.setText("");

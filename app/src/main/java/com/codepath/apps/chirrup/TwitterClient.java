@@ -114,7 +114,7 @@ public class TwitterClient extends OAuthBaseClient {
         getClient().get(apiUrl, params, repsonseHandler);
     }
 
-    public void searchTweets(JsonHttpResponseHandler repsonseHandler, String sinceOrMaxId, Long id, String query) {
+    public void searchPopularTweets(JsonHttpResponseHandler repsonseHandler, String sinceOrMaxId, Long id, String query) {
         String apiUrl = getApiUrl("search/tweets.json");
         //specify the params
         RequestParams params = new RequestParams();
@@ -127,6 +127,7 @@ public class TwitterClient extends OAuthBaseClient {
             params.put(sinceOrMaxId, id);
         }*/
         params.put("q", query);
+        params.put("result_type", "popular");
         getClient().get(apiUrl, params, repsonseHandler);
     }
 

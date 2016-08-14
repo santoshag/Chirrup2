@@ -18,13 +18,13 @@
 
             app:LoadingDots_dots_color="@android:color/holo_blue_light"
             app:LoadingDots_dots_count="5"
-            app:LoadingDots_dots_size="15dp"
+            app:LoadingDots_dots_size="10dp"
             app:LoadingDots_dots_space="4dp"
 
-            app:LoadingDots_loop_duration="800"
-            app:LoadingDots_loop_start_delay="100"
+            app:LoadingDots_loop_duration="20"
+            app:LoadingDots_loop_start_delay="1"
 
-            app:LoadingDots_jump_duration="300"
+            app:LoadingDots_jump_duration="200"
             app:LoadingDots_jump_height="10dp"/>
 
     <android.support.v4.widget.SwipeRefreshLayout

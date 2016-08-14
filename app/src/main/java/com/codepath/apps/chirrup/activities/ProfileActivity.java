@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.TwitterApplication;
 import com.codepath.apps.chirrup.TwitterClient;
@@ -27,6 +26,7 @@ import com.codepath.apps.chirrup.fragments.UserTimelineFragment;
 import com.codepath.apps.chirrup.models.User;
 import com.codepath.apps.chirrup.utils.Utils;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -34,7 +34,7 @@ import org.parceler.Parcels;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -108,7 +108,8 @@ public class ProfileActivity extends AppCompatActivity {
         tvFollowing.setText(getCustomTextForFollow("FOLLOWING", user.getFollowingCount()), TextView.BufferType.EDITABLE);
 
         Log.i("user.getProfileImageU", user.getProfileImageUrl());
-        Glide.with(getApplicationContext()).load(user.getProfileImageUrl()).bitmapTransform(new RoundedCornersTransformation(getApplicationContext(), 30, 0)).into(ivProfilePic);
+
+        Picasso.with(getApplicationContext()).load(user.getProfileImageUrl()).transform(new RoundedCornersTransformation(30, 0)).into(ivProfilePic);
     }
 
     private void lookupUser(String screenName){

@@ -8,15 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.activities.TimelineActivity;
 import com.codepath.apps.chirrup.models.DirectMessage;
 import com.codepath.apps.chirrup.models.User;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 /**
  * Created by santoshag on 8/5/16.
@@ -90,7 +90,7 @@ public class DirectMessageAdapter extends RecyclerView.Adapter<DirectMessageAdap
 //                getContext().startActivity(intent);
 //            }
 //        });
-        Glide.with(getContext()).load(otherUser.getProfileImageUrl()).bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0)).into(ivProfileImg);
+        Picasso.with(getContext()).load(otherUser.getProfileImageUrl()).transform(new RoundedCornersTransformation(15, 0)).into(ivProfileImg);
     }
 
     @Override

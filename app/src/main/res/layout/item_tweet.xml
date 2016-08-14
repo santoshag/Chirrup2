@@ -63,7 +63,7 @@
         android:paddingLeft="5dp"/>
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ivPhoto"
         android:paddingTop="5dp"

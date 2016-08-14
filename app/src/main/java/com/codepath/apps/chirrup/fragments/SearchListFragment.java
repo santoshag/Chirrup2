@@ -48,7 +48,7 @@ public class SearchListFragment extends TweetsListFragment{
         Log.i("hometime", "populateTimeline");
         String query = getArguments().getString("q");
         final String finalSinceOrMaxId = sinceOrMaxId;
-        client.searchTweets(new JsonHttpResponseHandler() {
+        client.searchPopularTweets(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("DEBUG getHomeTimeline", response.toString());

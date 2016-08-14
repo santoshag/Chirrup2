@@ -9,16 +9,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.activities.ProfileActivity;
 import com.codepath.apps.chirrup.models.User;
+import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
 import java.util.List;
 
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
+
 
 /**
  * Created by santoshag on 8/5/16.
@@ -81,7 +82,7 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
                 getContext().startActivity(intent);
             }
         });
-        Glide.with(getContext()).load(user.getProfileImageUrl()).bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0)).into(ivProfileImg);
+        Picasso.with(getContext()).load(user.getProfileImageUrl()).transform(new RoundedCornersTransformation(15, 0)).into(ivProfileImg);
     }
 
     @Override
