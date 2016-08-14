@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.activities.ProfileActivity;
 import com.codepath.apps.chirrup.decorators.LinkifiedTextView;
-import com.codepath.apps.chirrup.fragments.NewTweetFragment;
+import com.codepath.apps.chirrup.fragments.ReplyTweetFragment;
 import com.codepath.apps.chirrup.models.Tweet;
 
 import org.parceler.Parcels;
@@ -114,7 +114,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ivReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NewTweetFragment myDialog = NewTweetFragment.newInstance(true, tweet, tweet.getUser());
+                ReplyTweetFragment myDialog = ReplyTweetFragment.newInstance(true, tweet, tweet.getUser());
                 myDialog.show(mFragmentManager, "reply tweet");
             }
         });

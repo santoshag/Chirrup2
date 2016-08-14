@@ -44,7 +44,6 @@
         android:layout_gravity="bottom|right"
         app:backgroundTint="@color/colorPrimary"
         android:layout_margin="16dp"
-        android:onClick="composeNewTweet"
         app:fabSize="normal"
         android:src="@drawable/compose"
         app:layout_anchor="@id/rvTweetListFragment"

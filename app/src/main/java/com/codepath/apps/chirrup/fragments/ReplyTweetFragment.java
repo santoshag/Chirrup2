@@ -18,9 +18,12 @@ import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.TwitterApplication;
 import com.codepath.apps.chirrup.TwitterClient;
 import com.codepath.apps.chirrup.activities.TimelineActivity;
+import com.codepath.apps.chirrup.models.Tweet;
+import com.codepath.apps.chirrup.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,25 +33,54 @@ import cz.msebera.android.httpclient.Header;
 /**
  * Created by santoshag on 7/31/16.
  */
-public class NewTweetFragment extends BottomSheetDialogFragment {
+public class ReplyTweetFragment extends BottomSheetDialogFragment {
 
+    private static ReplyTweetFragment instance = null;
 
     @BindView(R.id.etTweetText) EditText etTweetText;
     @BindView(R.id.btnPost) Button btnPostTweet;
     @BindView(R.id.tvCharCount) TextView tvCharCount;
+    @BindView(R.id.tvInReplyTo) TextView tvInReplyTo;
 
+    Boolean isReply;
+    Tweet tweet;
+    User user;
     private Unbinder unbinder;
 
     TwitterClient client;
     //    TextView tvCharCount;
     public static int TWEET_CHAR_LIMIT = 140;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_new_tweet, container);
+        View view = inflater.inflate(R.layout.fragment_reply_tweet, container);
         unbinder = ButterKnife.bind(this, view);
+        tweet = Parcels.unwrap(getArguments().getParcelable("tweet"));
+        user = Parcels.unwrap(getArguments().getParcelable("user"));
+        isReply = (Boolean) getArguments().get("is_reply");
         return view;
     }
+
+    public static ReplyTweetFragment newInstance(Boolean isReply, Tweet tweet, User user) {
+        ReplyTweetFragment f = new ReplyTweetFragment();
+
+        // Supply num input as an argument.
+        Bundle args = new Bundle();
+        args.putBoolean("is_reply", isReply);
+        args.putParcelable("user", Parcels.wrap(user));
+        args.putParcelable("tweet", Parcels.wrap(tweet));
+        f.setArguments(args);
+
+        return f;
+    }
+
 
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
@@ -73,7 +105,7 @@ public class NewTweetFragment extends BottomSheetDialogFragment {
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         dismiss();
                     }
-                }, etTweetText.getText().toString(), false, 0);
+                }, etTweetText.getText().toString(), isReply, tweet.getRemoteId());
             }
 
 
@@ -103,6 +135,13 @@ public class NewTweetFragment extends BottomSheetDialogFragment {
 
             }
         });
+
+        if(isReply){
+            tvInReplyTo.setVisibility(View.VISIBLE);
+            tvInReplyTo.setText("In reply to " + user.getName());
+            etTweetText.setText(user.getScreenName() + " ");
+            etTweetText.requestFocus();
+        }
 
     }
 

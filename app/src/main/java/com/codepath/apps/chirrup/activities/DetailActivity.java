@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.decorators.LinkifiedTextView;
-import com.codepath.apps.chirrup.fragments.NewTweetFragment;
+import com.codepath.apps.chirrup.fragments.ReplyTweetFragment;
 import com.codepath.apps.chirrup.models.Entity;
 import com.codepath.apps.chirrup.models.Tweet;
 import com.codepath.apps.chirrup.models.User;
@@ -104,7 +104,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public void replyToTweet(View view) {
 
-        NewTweetFragment myDialog = NewTweetFragment.newInstance(true, tweet, user);
+        ReplyTweetFragment myDialog = ReplyTweetFragment.newInstance(true, tweet, user);
         FragmentManager fm = getSupportFragmentManager();
         myDialog.show(fm, "reply tweet");
     }

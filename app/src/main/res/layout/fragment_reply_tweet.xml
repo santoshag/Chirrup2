@@ -10,6 +10,17 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="#FFFFFF">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvInReplyTo"
+        android:text="140"
+        android:textSize="14sp"
+        android:layout_alignParentLeft="true"
+        fontPath="fonts/roboto_light.ttf"
+        android:visibility="gone"
+        android:id="@+id/tvInReplyTo"/>
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

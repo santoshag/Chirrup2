@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -48,7 +49,8 @@ public class TimelineActivity extends AppCompatActivity {
     ImageView ivProfilePhoto;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-
+    @BindView(R.id.fabCompose)
+    FloatingActionButton fabCompose;
     public static String loggedUserScreenName;
 
 
@@ -77,6 +79,16 @@ public class TimelineActivity extends AppCompatActivity {
 
         setupProfileImage();
 
+
+        fabCompose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NewTweetFragment myDialog = new NewTweetFragment();
+                FragmentManager fm = getSupportFragmentManager();
+                myDialog.show(fm, "new tweet");
+
+            }
+        });
         //setupSwipeToRefreshView();
     }
 
@@ -115,12 +127,6 @@ public class TimelineActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(context));
     }
 
-    public void composeNewTweet(View view) {
-        NewTweetFragment myDialog = NewTweetFragment.newInstance(false, null, null);
-        FragmentManager fm = getSupportFragmentManager();
-        myDialog.show(fm, "new tweet");
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
