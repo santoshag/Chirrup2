@@ -37,21 +37,51 @@ public class Tweet extends Model{
     private String createdAt;
     @Column(name = "relative_date")
     private String relativeDate;
+
+    public void setRetweetCount(int retweetCount) {
+        this.retweetCount = retweetCount;
+    }
+
+    public void setRetweeted(Boolean retweeted) {
+        this.retweeted = retweeted;
+    }
+
     @Column(name = "retweet_count")
     private int retweetCount = 0;
-    @Column(name = "favourites_count")
-    private int favouritesCount = 0;
+    @Column(name = "favorite_count")
+    private int favorite_count = 0;
 
-    public Boolean getRetweeted() {
-        return retweeted;
+    public void setFavorited(Boolean favorited) {
+        this.favorited = favorited;
+    }
+
+    public void setFavorite_count(int favorite_count) {
+        this.favorite_count = favorite_count;
+    }
+
+    @Column(name = "favorited")
+    private Boolean favorited;
+
+    public Boolean getfavorited() {
+        return favorited;
+    }
+
+    public static Long getLastTweetId() {
+        return lastTweetId;
     }
 
     @Column(name = "retweeted")
     private Boolean retweeted;
 
-    public int getFavouritesCount() {
-        return favouritesCount;
+    public Boolean getRetweeted() {
+        return retweeted;
     }
+
+    public int getFavoritesCount() {
+        return favorite_count;
+    }
+
+
 
     public int getRetweetCount() {
         return retweetCount;
@@ -94,24 +124,24 @@ public class Tweet extends Model{
             if(jsonObject.has("retweet_count")) {
                 tweet.retweetCount = Integer.parseInt(jsonObject.getString("retweet_count"));
             }
+
+
             if(jsonObject.has("favorite_count")) {
-                tweet.favouritesCount = Integer.parseInt(jsonObject.getString("favorite_count"));
+                tweet.favorite_count = Integer.parseInt(jsonObject.getString("favorite_count"));
             }
             User user = User.findOrCreateFromJSON(jsonObject.getJSONObject("user"));
             tweet.user = user;
-            user.save();
             Entity entity = Entity.fromJSON(jsonObject.getJSONObject("entities"));
             tweet.entity = entity;
-            entity.save();
             tweet.relativeDate = getRelativeTimeAgo(jsonObject.getString("created_at"));
 
             tweet.retweeted = jsonObject.getBoolean("retweeted");
-            if(tweet.retweeted){
-                Log.i("TWeet", jsonObject.toString());
+            tweet.favorited = jsonObject.getBoolean("favorited");
+            if(tweet.getBody().startsWith("RT")) {
+                tweet.favorited = false;
+                tweet.favorite_count = 0;
+                Log.i("tweet",tweet.body +"" + jsonObject.getString("favorite_count") + " " + jsonObject.toString());
             }
-
-            tweet.save();
-
         } catch (JSONException e) {
 //            e.printStackTrace();
         }

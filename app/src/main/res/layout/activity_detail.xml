@@ -118,6 +118,7 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:layout_weight=".12"
+                android:onClick="reTweet"
                 android:src="@drawable/retweet_off" />
 
             <TextView
@@ -129,6 +130,7 @@
 
             <ImageView
                 android:id="@+id/ivLike"
+                android:onClick="favourTweet"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:layout_weight=".12"

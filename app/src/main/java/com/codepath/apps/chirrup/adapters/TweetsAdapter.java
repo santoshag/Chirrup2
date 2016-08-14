@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +13,21 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
+import com.codepath.apps.chirrup.TwitterApplication;
+import com.codepath.apps.chirrup.TwitterClient;
 import com.codepath.apps.chirrup.activities.ProfileActivity;
 import com.codepath.apps.chirrup.decorators.LinkifiedTextView;
 import com.codepath.apps.chirrup.fragments.ReplyTweetFragment;
 import com.codepath.apps.chirrup.models.Tweet;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
@@ -33,12 +40,14 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     // Store the context for easy access
     private Context mContext;
     FragmentManager mFragmentManager;
+    TwitterClient client;
 
     // Pass in the tweet array into the constructor
     public TweetsAdapter(Context context, List<Tweet> tweets, FragmentManager supportFragmentManager) {
         mTweets = tweets;
         mContext = context;
         mFragmentManager = supportFragmentManager;
+        client = TwitterApplication.getRestClient();
     }
 
     // Easy access to the context object in the recyclerview
@@ -73,12 +82,12 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvRelativeTime = viewHolder.tvRelativeTime;
         ImageView ivProfileImg = viewHolder.ivProfileImg;
         ImageView ivPhoto = viewHolder.ivPhoto;
-        ImageView ivRetweetsCount = viewHolder.ivRetweetsCount;
-        ImageView ivLike = viewHolder.ivLike;
+        final ImageView ivRetweetsCount = viewHolder.ivRetweetsCount;
+        final ImageView ivLike = viewHolder.ivLike;
         ImageView ivReply = viewHolder.ivReply;
 
-        TextView tvRetweetCount = viewHolder.tvRetweetCount;
-        TextView tvLikeCount = viewHolder.tvLikeCount;
+        final TextView tvRetweetCount = viewHolder.tvRetweetCount;
+        final TextView tvLikeCount = viewHolder.tvLikeCount;
 
         tvUserName.setText(tweet.getUser().getName());
         tvScreenName.setText(tweet.getUser().getScreenName());
@@ -87,15 +96,20 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         tvLikeCount.setText("");
 
         if (tweet.getRetweetCount() > 0) {
-            ivRetweetsCount.setImageResource(0);
             tvRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
-            ivRetweetsCount.setImageDrawable(getContext().getResources().getDrawable(R.drawable.retweet_on));
+//            ivRetweetsCount.setImageDrawable(getContext().getResources().getDrawable(R.drawable.retweet_on));
         }
-        if (tweet.getFavouritesCount() > 0) {
-            ivLike.setImageResource(0);
-            tvLikeCount.setText(String.valueOf(tweet.getFavouritesCount()));
-            ivLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.like_on));
 
+
+        if (tweet.getFavoritesCount() > 0) {
+            tvLikeCount.setText(String.valueOf(tweet.getFavoritesCount()));
+
+        }
+        if(tweet.getfavorited()){
+            ivLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.like_on));
+        }
+        if(tweet.getRetweeted()){
+            ivRetweetsCount.setImageDrawable(getContext().getResources().getDrawable(R.drawable.retweet_on));
         }
 //        TextViewUtils.stripUnderlines(tvBody);
         tvRelativeTime.setText(tweet.getRelativeDate());
@@ -119,8 +133,105 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             }
         });
 
+        ivLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                favorTweet(tweet, tvLikeCount, ivLike);
+
+            }
+        });
+
+        ivRetweetsCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reTweet(tweet, tvRetweetCount, ivRetweetsCount);
+
+            }
+        });
+
         Glide.with(getContext()).load(tweet.getUser().getProfileImageUrl()).bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0)).into(ivProfileImg);
         Glide.with(getContext()).load(tweet.getEntity().getMediaUrl()).bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0)).into(ivPhoto);
+    }
+
+    private void favorTweet(final Tweet tweet, final TextView tvFavorCount, final ImageView ivFavor) {
+
+        client.favorTweet(new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG", "favorited" + response.toString());
+                try {
+                    if(response.getBoolean("favorited")){
+                        tweet.setFavorite_count(Integer.parseInt(response.getString("favorite_count")));
+                        ivFavor.setImageDrawable(getContext().getResources().getDrawable(R.drawable.like_on));
+                    }else{
+                        ivFavor.setImageDrawable(getContext().getResources().getDrawable(R.drawable.like_off));
+                    }
+                    tweet.setFavorited(response.getBoolean("favorited"));
+                    if(response.getLong("favorite_count") > 0) {
+                        tvFavorCount.setText(String.valueOf(response.getLong("favorite_count")));
+                    }else{
+                        tvFavorCount.setText("");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG", "failure" + errorResponse.toString() + "  " + tweet.getRemoteId());
+
+            }
+        }, tweet.getfavorited(), tweet.getRemoteId());
+
+    }
+
+
+    private void reTweet(final Tweet tweet, final TextView tvRetweetCount, final ImageView ivRetweetCount) {
+
+        client.reTweet(new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG", "retweeted" + response.toString());
+                try {
+                    if(response.getBoolean("retweeted")){
+                        tweet.setFavorite_count(Integer.parseInt(response.getString("retweet_count")));
+                        ivRetweetCount.setImageDrawable(getContext().getResources().getDrawable(R.drawable.retweet_on));
+                    }else{
+                        ivRetweetCount.setImageDrawable(getContext().getResources().getDrawable(R.drawable.retweet_off));
+                    }
+                    tweet.setRetweeted(response.getBoolean("retweeted"));
+                    if(response.getLong("retweet_count") > 0) {
+                        tvRetweetCount.setText(String.valueOf(response.getLong("retweet_count")));
+                    }else{
+                        tvRetweetCount.setText("");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG", "failure" + errorResponse.toString() + "  " + tweet.getRemoteId());
+
+            }
+        }, tweet.getRetweeted(), tweet.getRemoteId());
+
     }
 
     @Override

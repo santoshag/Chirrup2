@@ -12,16 +12,22 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.chirrup.R;
+import com.codepath.apps.chirrup.TwitterApplication;
+import com.codepath.apps.chirrup.TwitterClient;
 import com.codepath.apps.chirrup.decorators.LinkifiedTextView;
 import com.codepath.apps.chirrup.fragments.ReplyTweetFragment;
 import com.codepath.apps.chirrup.models.Entity;
 import com.codepath.apps.chirrup.models.Tweet;
 import com.codepath.apps.chirrup.models.User;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -49,6 +55,7 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.ivLike)
     ImageView ivLike;
 
+    TwitterClient client;
 
     private Tweet tweet;
     private User user;
@@ -60,6 +67,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         ButterKnife.bind(this);
+        client = TwitterApplication.getRestClient();
 
         // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
@@ -94,14 +102,90 @@ public class DetailActivity extends AppCompatActivity {
             tvRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
             ivRetweetsCount.setImageDrawable(this.getResources().getDrawable(R.drawable.retweet_on));
         }
-        if (tweet.getFavouritesCount() > 0) {
+        if (tweet.getFavoritesCount() > 0) {
             ivLike.setImageResource(0);
-            tvLikeCount.setText(String.valueOf(tweet.getFavouritesCount()));
+            tvLikeCount.setText(String.valueOf(tweet.getFavoritesCount()));
             ivLike.setImageDrawable(this.getResources().getDrawable(R.drawable.like_on));
 
         }
     }
 
+    private void favorTweet(final Tweet tweet, final TextView tvFavorCount, final ImageView ivFavor) {
+
+        client.favorTweet(new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG", "favorited" + response.toString());
+                try {
+                    if(response.getBoolean("favorited")){
+                        tweet.setFavorite_count(Integer.parseInt(response.getString("favorite_count")));
+                        ivFavor.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.like_on));
+                    }else{
+                        ivFavor.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.like_off));
+                    }
+                    tweet.setFavorited(response.getBoolean("favorited"));
+                    if(response.getLong("favorite_count") > 0) {
+                        tvFavorCount.setText(String.valueOf(response.getLong("favorite_count")));
+                    }else{
+                        tvFavorCount.setText("");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG", "failure" + errorResponse.toString() + "  " + tweet.getRemoteId());
+
+            }
+        }, tweet.getfavorited(), tweet.getRemoteId());
+
+    }
+
+    private void reTweet(final Tweet tweet, final TextView tvRetweetCount, final ImageView ivRetweetCount) {
+
+        client.reTweet(new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG", "retweeted" + response.toString());
+                try {
+                    if(response.getBoolean("retweeted")){
+                        tweet.setFavorite_count(Integer.parseInt(response.getString("retweet_count")));
+                        ivRetweetCount.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.retweet_on));
+                    }else{
+                        ivRetweetCount.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.retweet_off));
+                    }
+                    tweet.setRetweeted(response.getBoolean("retweeted"));
+                    if(response.getLong("retweet_count") > 0) {
+                        tvRetweetCount.setText(String.valueOf(response.getLong("retweet_count")));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG", "failure" + errorResponse.toString() + "  " + tweet.getRemoteId());
+
+            }
+        }, tweet.getRetweeted(), tweet.getRemoteId());
+
+    }
     public void replyToTweet(View view) {
 
         ReplyTweetFragment myDialog = ReplyTweetFragment.newInstance(true, tweet, user);
@@ -114,5 +198,14 @@ public class DetailActivity extends AppCompatActivity {
     protected void attachBaseContext(Context context) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(context));
     }
+
+    public void reTweet(View view) {
+        reTweet(tweet, tvRetweetCount, ivRetweetsCount);
+    }
+
+    public void favourTweet(View view) {
+        favorTweet(tweet, tvLikeCount, ivLike);
+    }
+
 
 }
