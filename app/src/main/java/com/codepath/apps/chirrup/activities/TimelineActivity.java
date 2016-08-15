@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.chirrup.R;
@@ -49,6 +50,8 @@ public class TimelineActivity extends AppCompatActivity {
     ImageView ivProfilePhoto;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.toolbarTitle)
+    TextView toolbarTitle;
     @BindView(R.id.fabCompose)
     FloatingActionButton fabCompose;
     public static String loggedUserScreenName;
@@ -56,6 +59,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private TwitterClient client;
     private TweetsListFragment tweetsListFragment;
+    private String tabText[] = {"Home", "Mentions", "Messages"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,17 +72,13 @@ public class TimelineActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        //get the viewpager
-        ViewPager vp = (ViewPager) findViewById(R.id.viewpager);
-        //set teh adapter
-        vp.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
-        //find the sliding tab
-        PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        //attach the tab to viewpager
-        tabStrip.setViewPager(vp);
+        setupTabLayout();
+        setpViews();
 
+    }
+
+    private void setpViews() {
         setupProfileImage();
-
 
         fabCompose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,23 +92,51 @@ public class TimelineActivity extends AppCompatActivity {
         //setupSwipeToRefreshView();
     }
 
+    private void setupTabLayout() {
+        //get the viewpager
+        ViewPager vp = (ViewPager) findViewById(R.id.viewpager);
+        //set teh adapter
+        vp.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
+        //find the sliding tab
+        PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        //attach the tab to viewpager
+        tabStrip.setViewPager(vp);
+        tabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                toolbarTitle.setText(tabText[position]);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+    }
+
     private void setupProfileImage() {
         client.getLoggedUserProfile(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    final User user = User.fromJSON(response);
-                    String profileImageUrl = user.getProfileImageUrl();
-                    Log.i("profile_PHOTO", profileImageUrl);
-                    loggedUserScreenName = user.getScreenName();
-                    Picasso.with(getApplicationContext()).load(profileImageUrl).transform(new CropCircleTransformation()).into(ivProfilePhoto);
-                    ivProfilePhoto.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                            intent.putExtra("user", Parcels.wrap(user));
-                            startActivity(intent);
-                        }
-                    });
+                final User user = User.fromJSON(response);
+                String profileImageUrl = user.getProfileImageUrl();
+                Log.i("profile_PHOTO", profileImageUrl);
+                loggedUserScreenName = user.getScreenName();
+                Picasso.with(getApplicationContext()).load(profileImageUrl).transform(new CropCircleTransformation()).into(ivProfilePhoto);
+                ivProfilePhoto.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        intent.putExtra("user", Parcels.wrap(user));
+                        startActivity(intent);
+                    }
+                });
             }
 
             @Override
@@ -167,27 +195,27 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
 
-    public class TweetsPagerAdapter extends FragmentPagerAdapter implements PagerSlidingTabStrip.IconTabProvider{
+    public class TweetsPagerAdapter extends FragmentPagerAdapter implements PagerSlidingTabStrip.IconTabProvider {
 
         private int tabIcons[] = {R.drawable.home, R.drawable.mention, R.drawable.dm};
 
 
         //adapter gets the manager to insert or remove fragment from activity
-        public TweetsPagerAdapter(FragmentManager fm){
+        public TweetsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         //gets the order of fragments withing the pager/tab layout
         @Override
         public Fragment getItem(int position) {
-            if(position ==0){
+            if (position == 0) {
                 return new HomeTimelineFragment();
-            }else if(position ==1){
+            } else if (position == 1) {
                 return new MentionsTimelineFragment();
-            }else if(position ==2){
+            } else if (position == 2) {
                 return new DirectMessagesFragment();
 
-            }else{
+            } else {
                 return null;
             }
         }

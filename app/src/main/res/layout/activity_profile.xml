@@ -46,7 +46,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:paddingTop="20dp"
-                android:paddingLeft="20dp"
+                android:paddingLeft="40dp"
                 android:background="@android:color/white"
                 >
 
@@ -54,7 +54,6 @@
                     android:id="@+id/ivProfilePic"
                     android:layout_width="75dp"
                     android:layout_height="75dp"
-
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
@@ -70,7 +69,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/ivProfilePic"
-                    android:text="New Text"
+                    android:text=""
                     android:textColor="@color/primaryTextColor"
                     android:textSize="20sp" />
 
@@ -82,7 +81,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/tvName"
-                    android:text="New Text"
+                    android:text=""
                     android:textColor="#AAB8C2"
                     android:textSize="12sp" />
 
@@ -95,7 +94,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/tvScreenName"
                     android:layout_marginBottom="10dp"
-                    android:text="New Text"
+                    android:text=""
                     android:textColor="@color/primaryTextColor"
                     android:textColorLink="@color/colorPrimary" />
 
@@ -108,18 +107,18 @@
                     android:layout_below="@+id/tvDescription"
                     android:onClick="onFollowingCountClick"
                     android:paddingRight="20dp"
-                    android:text="New Text" />
+                    android:text="" />
 
                 <TextView
                     android:id="@+id/tvFollowers"
                     android:layout_width="wrap_content"
                     android:paddingBottom="20dp"
-
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tvDescription"
                     android:layout_toRightOf="@+id/tvFollowing"
                     android:onClick="onFollowersCountClick"
-                    android:text="New Text" />
+                    android:layout_marginBottom="5dp"
+                    android:text="" />
 
             </RelativeLayout>
 

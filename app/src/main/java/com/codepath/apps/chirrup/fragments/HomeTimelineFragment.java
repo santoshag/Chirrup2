@@ -36,7 +36,6 @@ public class HomeTimelineFragment extends TweetsListFragment{
 
     //send API request to get tweets and add it to listview
     public void populateTimeline(String sinceOrMaxId, long count) {
-        Log.i("hometime", "populateTimeline");
 
         final String finalSinceOrMaxId = sinceOrMaxId;
         client.getHomeTimeline(new JsonHttpResponseHandler() {

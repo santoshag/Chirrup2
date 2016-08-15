@@ -26,7 +26,6 @@ public class MentionsTimelineFragment extends TweetsListFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("MentionsTimelineFragmen", "oncreate");
         client = TwitterApplication.getRestClient();
     }
 
@@ -36,7 +35,6 @@ public class MentionsTimelineFragment extends TweetsListFragment {
 
     //send API request to get tweets and add it to listview
     public void populateTimeline(String sinceOrMaxId, long count) {
-        Log.i("mentionstime", "populateTimeline");
 
         final String finalSinceOrMaxId = sinceOrMaxId;
         client.getMentionsTimeline(new JsonHttpResponseHandler() {

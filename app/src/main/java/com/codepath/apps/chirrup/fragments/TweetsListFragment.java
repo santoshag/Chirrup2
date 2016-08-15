@@ -70,26 +70,15 @@ public abstract class TweetsListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.i("TweetsListFragment", "onResume");
 
         if (!Utils.checkForInternet()) {
-            airplaneMode = true;
-            Toast.makeText(getActivity(), "Not connected to network. Using offline tweets.", Toast.LENGTH_SHORT).show();
-            //fabCompose.setVisibility(View.INVISIBLE);
+            Toast.makeText(getActivity(), "Not connected to network.", Toast.LENGTH_SHORT).show();
             swipeContainer.setEnabled(false);
             List<Tweet> queryResults = new Select().from(Tweet.class)
                     .orderBy("remote_id DESC").execute();
-            // Load the result into the adapter using `addAll`
-//            Log.i("sql", "loading data from offline: " + queryResults.size() + " " + queryResults.get(1).getUser().getProfileImageUrl());
-            //ivAirplaneMode.setVisibility(View.VISIBLE);
             addAll(queryResults, true);
         } else {
             airplaneMode = false;
-            Log.i("TweetsListFragment", "airplaneMode false");
-
-            //fabCompose.setVisibility(View.VISIBLE);
-            //ivAirplaneMode.setVisibility(View.GONE);
-            //get timeline here
             populateTimeline("since_id", (long) 1);
             //setup swipe to refresh
             setupSwipeToRefreshView();

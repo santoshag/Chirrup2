@@ -21,10 +21,10 @@
             app:LoadingDots_dots_size="10dp"
             app:LoadingDots_dots_space="4dp"
 
-            app:LoadingDots_loop_duration="20"
+            app:LoadingDots_loop_duration="50"
             app:LoadingDots_loop_start_delay="1"
 
-            app:LoadingDots_jump_duration="200"
+            app:LoadingDots_jump_duration="100"
             app:LoadingDots_jump_height="10dp"/>
 
     <android.support.v4.widget.SwipeRefreshLayout

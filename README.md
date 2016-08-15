@@ -44,6 +44,7 @@ The following **additional** features are implemented:
 * [x] Used Spans to [Style Sections of Text] (http://guides.codepath.com/android/Working-with-the-TextView#using-spans-to-style-sections-of-text)
 * [x] User can navigate to any of the followers/following users profile and see thier timeline
 * [x] Animations for favourite and retweet from detail activity
+* [x] Material design scrollview for Tweet detail activity
 
 
 ## Video Walkthrough

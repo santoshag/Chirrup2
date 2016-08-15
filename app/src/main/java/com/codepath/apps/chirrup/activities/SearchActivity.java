@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.TwitterApplication;
@@ -26,7 +27,10 @@ public class SearchActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.toolbarTitle)
+    TextView toolbarTitle;
     private TwitterClient client;
+    String queryText;
     private TweetsListFragment tweetsListFragment;
 
     @Override
@@ -34,16 +38,17 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
-
         client = TwitterApplication.getRestClient();
         // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbarTitle.setText("Search Popular Tweets");
 
 
         if (savedInstanceState == null) {
             loadFragment(getIntent().getStringExtra("q"));
         }
+
     }
 
 
@@ -85,6 +90,7 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                queryText = query;
                 // perform query here
                 searchView.clearFocus();
                 loadFragment(query);

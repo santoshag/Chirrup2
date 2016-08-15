@@ -109,7 +109,6 @@ public class DetailActivity extends AppCompatActivity {
         }
         if (tweet.getFavoritesCount() > 0) {
             tvLikeCount.setText(String.valueOf(tweet.getFavoritesCount()));
-            ivLike.setLiked(true);
 
         }
         if(tweet.getfavorited()){
