@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Chirrup2</string>
+    <string name="app_name">Chirrup</string>
     <string name="login_label">Connect to Twitter</string>
     <string name="tweet">Tweet</string>
 

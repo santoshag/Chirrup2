@@ -2,6 +2,7 @@ package com.codepath.apps.chirrup.activities;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.TwitterApplication;
@@ -46,7 +48,13 @@ public class SearchActivity extends AppCompatActivity {
 
 
         if (savedInstanceState == null) {
-            loadFragment(getIntent().getStringExtra("q"));
+            if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
+                String query = getIntent().getStringExtra(SearchManager.QUERY);
+                Toast.makeText(this, "Searching for " + query, Toast.LENGTH_LONG ).show();
+                loadFragment(query);
+            }else {
+                loadFragment(getIntent().getStringExtra("q"));
+            }
         }
 
     }
