@@ -1,7 +1,5 @@
 package com.codepath.apps.chirrup.models;
 
-import android.util.Log;
-
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -140,7 +138,6 @@ public class Tweet extends Model{
             if(tweet.getBody().startsWith("RT")) {
                 tweet.favorited = false;
                 tweet.favorite_count = 0;
-                Log.i("tweet",tweet.body +"" + jsonObject.getString("favorite_count") + " " + jsonObject.toString());
             }
         } catch (JSONException e) {
 //            e.printStackTrace();

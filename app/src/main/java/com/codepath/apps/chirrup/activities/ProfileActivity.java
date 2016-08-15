@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -52,14 +53,14 @@ public class ProfileActivity extends AppCompatActivity {
     TextView tvFollowers;
     @BindView(R.id.tvFollowing)
     TextView tvFollowing;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.toolbarTitle)
-    TextView toolbarTitle;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbar;
 
     public enum Follow {
         Following, Follower;
-    };
+    }
+
+    ;
 
     private User user;
 
@@ -69,6 +70,12 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         ButterKnife.bind(this);
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -77,11 +84,12 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             //get screen name
-            if(getIntent().getBooleanExtra("from_user_span", false)) {
+            if (getIntent().getBooleanExtra("from_user_span", false)) {
 
                 Log.i("name", getIntent().getStringExtra("screen_name"));
+
                 lookupUser(getIntent().getStringExtra("screen_name"));
-            }else{
+            } else {
                 user = Parcels.unwrap(getIntent().getParcelableExtra("user"));
                 setupView();
             }
@@ -90,7 +98,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void setupView(){
+    private void setupView() {
         String screenName = user.getScreenName();
         UserTimelineFragment fragmentUserTimeline = UserTimelineFragment.newInstance(screenName);
         //display user fragment dynamically within this activity
@@ -98,8 +106,8 @@ public class ProfileActivity extends AppCompatActivity {
         ft.replace(R.id.flContainer, fragmentUserTimeline);
         ft.commit();
 
+        collapsingToolbar.setTitle(user.getName());
 
-        toolbarTitle.setText(user.getScreenName());
         tvName.setText(user.getName());
         tvScreenName.setText(user.getScreenName());
         tvName.setText(user.getName());
@@ -112,7 +120,7 @@ public class ProfileActivity extends AppCompatActivity {
         Picasso.with(getApplicationContext()).load(user.getProfileImageUrl()).transform(new RoundedCornersTransformation(30, 0)).into(ivProfilePic);
     }
 
-    private void lookupUser(String screenName){
+    private void lookupUser(String screenName) {
         client.lookupUser(screenName, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -141,7 +149,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         String countStr = Utils.getRelativeNum(count);
         // Create a span that will make the text red
-        ForegroundColorSpan redForegroundColorSpan = new ForegroundColorSpan(
+        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(
                 getResources().getColor(R.color.primaryTextColor));
 
         // Use a SpannableStringBuilder so that both the text and the spans are mutable
@@ -149,7 +157,7 @@ public class ProfileActivity extends AppCompatActivity {
 //
         // Apply the color span
         ssb.setSpan(
-                redForegroundColorSpan,            // the span to add
+                foregroundColorSpan,            // the span to add
                 0,                                 // the start of the span (inclusive)
                 ssb.length(),                      // the end of the span (exclusive)
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE); // behavior when text is later inserted into the SpannableStringBuilder
@@ -198,6 +206,17 @@ public class ProfileActivity extends AppCompatActivity {
                 ssb.length(),                      // the end of the span (exclusive)
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE); // behavior when text is later inserted into the SpannableStringBuilder
 
+        // Create a span that will make the text red
+        ForegroundColorSpan textColorSpan = new ForegroundColorSpan(
+                getResources().getColor(R.color.textColorSecondary));
+
+
+        // Apply the color span
+        ssb.setSpan(
+                textColorSpan,            // the span to add
+                ssb.length() - str.length(),        // the start of the span (inclusive)
+                ssb.length(),                      // the end of the span (exclusive)
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE); // behavior when text is later inserted into the SpannableStringBuilder
 
 
         return ssb;
@@ -224,40 +243,33 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    public class CustomTypefaceSpan extends MetricAffectingSpan
-    {
+    public class CustomTypefaceSpan extends MetricAffectingSpan {
         private final Typeface typeface;
 
-        public CustomTypefaceSpan(final Typeface typeface)
-        {
+        public CustomTypefaceSpan(final Typeface typeface) {
             this.typeface = typeface;
         }
 
         @Override
-        public void updateDrawState(final TextPaint drawState)
-        {
+        public void updateDrawState(final TextPaint drawState) {
             apply(drawState);
         }
 
         @Override
-        public void updateMeasureState(final TextPaint paint)
-        {
+        public void updateMeasureState(final TextPaint paint) {
             apply(paint);
         }
 
-        private void apply(final Paint paint)
-        {
+        private void apply(final Paint paint) {
             final Typeface oldTypeface = paint.getTypeface();
             final int oldStyle = oldTypeface != null ? oldTypeface.getStyle() : 0;
             final int fakeStyle = oldStyle & ~typeface.getStyle();
 
-            if ((fakeStyle & Typeface.BOLD) != 0)
-            {
+            if ((fakeStyle & Typeface.BOLD) != 0) {
                 paint.setFakeBoldText(true);
             }
 
-            if ((fakeStyle & Typeface.ITALIC) != 0)
-            {
+            if ((fakeStyle & Typeface.ITALIC) != 0) {
                 paint.setTextSkewX(-0.25f);
             }
 

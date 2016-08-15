@@ -164,5 +164,4 @@
             android:layout_toRightOf="@+id/ivLike"
             android:paddingTop="30dp"/>
     </RelativeLayout>
-
 </android.support.design.widget.CoordinatorLayout>
