@@ -94,8 +94,8 @@ public class DetailActivity extends AppCompatActivity {
         tvBody.setText(tweet.getBody());
         tvTweetTime.setText(tweet.getRelativeDate());
         Picasso.with(this).load(user.getProfileImageUrl()).transform(new RoundedCornersTransformation(15, 0)).into(ivProfileImg);
-        if (entity != null) {
-            //Picasso.with(this).load(tweet.getEntity().getMediaUrl()).transform(new RoundedCornersTransformation(15, 0)).into(ivPhoto);
+        if (entity != null && !entity.getMediaUrl().isEmpty()) {
+            Picasso.with(this).load(tweet.getEntity().getMediaUrl()).transform(new RoundedCornersTransformation(15, 0)).into(ivPhoto);
         }
         tvRetweetCount.setText("");
         tvLikeCount.setText("");

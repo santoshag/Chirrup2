@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.codepath.apps.chirrup.R;
 import com.codepath.apps.chirrup.TwitterApplication;
@@ -43,6 +44,8 @@ public class FollowActivity extends AppCompatActivity {
     private ArrayList<User> followList;
     private User user;
     private TwitterClient client;
+    @BindView(R.id.toolbarTitle)
+    TextView toolbarTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +67,11 @@ public class FollowActivity extends AppCompatActivity {
         ProfileActivity.Follow follow = (ProfileActivity.Follow) getIntent().getSerializableExtra("Follow");
         switch (follow) {
             case Follower:
+                toolbarTitle.setText("Followers");
                 populateFollowers();
                 break;
             case Following:
+                toolbarTitle.setText("Following");
                 populateFriends();
                 break;
         }

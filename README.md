@@ -51,7 +51,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-[Watch demo on Youtube](https://youtu.be/V4CFH00_f9M).
+[Watch demo on Youtube](https://youtu.be/tlWfj-erwsk).
 
 ## Notes
 
