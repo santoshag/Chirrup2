@@ -184,8 +184,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             }
         });
 
+        ivProfileImg.setImageResource(0);
+
         Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).transform(new RoundedCornersTransformation(30, 0)).into(ivProfileImg);
         if(!tweet.getEntity().getMediaUrl().equals("")) {
+            ivPhoto.setImageResource(0);
             Picasso.with(getContext()).load(tweet.getEntity().getMediaUrl()).transform(new RoundedCornersTransformation(15, 0)).into(ivPhoto);
         }
     }
