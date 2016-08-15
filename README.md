@@ -41,6 +41,7 @@ The following **bonus** features are implemented:
 
 The following **additional** features are implemented:
 
+* [x] **Look and feel** of android twitter app implemented using custom fonts, animations, image views, layouts 
 * [x] Used Spans to [Style Sections of Text] (http://guides.codepath.com/android/Working-with-the-TextView#using-spans-to-style-sections-of-text)
 * [x] User can navigate to any of the followers/following users profile and see thier timeline
 * [x] Animations for favourite and retweet from detail activity
