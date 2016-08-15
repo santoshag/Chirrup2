@@ -168,8 +168,10 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
 
-    public class TweetsPagerAdapter extends FragmentPagerAdapter{
-        private String tabTitles[] = { "Home", "Mentions", "Msgs"};
+    public class TweetsPagerAdapter extends FragmentPagerAdapter implements PagerSlidingTabStrip.IconTabProvider{
+
+        private int tabIcons[] = {R.drawable.home, R.drawable.mention, R.drawable.dm};
+
 
         //adapter gets the manager to insert or remove fragment from activity
         public TweetsPagerAdapter(FragmentManager fm){
@@ -191,16 +193,16 @@ public class TimelineActivity extends AppCompatActivity {
             }
         }
 
-        //return tabl title displayed at top
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabTitles[position];
-        }
 
         //number of tabs
         @Override
         public int getCount() {
-            return tabTitles.length;
+            return tabIcons.length;
+        }
+
+        @Override
+        public int getPageIconResId(int position) {
+            return tabIcons[position];
         }
     }
 
