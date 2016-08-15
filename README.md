@@ -54,7 +54,7 @@ Here's a walkthrough of implemented user stories:
 
 [Watch demo on Youtube](https://youtu.be/quEvk_8a1FA).
 
-[Updated demo on Youtube](https://www.youtube.com/watch?v=Vm8x0ld34bE).
+[Updated demo on Youtube](https://youtu.be/8Wqpp6l3jMw).
 
 
 ## Notes
